@@ -288,7 +288,7 @@ export default function Sidebar({
 
       {/* Desktop sidebar */}
       <div
-        className={`hidden lg:flex lg:flex-col bg-[#1A1A2E] shadow-lg transition-all duration-300 ease-in-out ${sidebarWidth}`}
+        className={`hidden lg:flex lg:flex-col bg-[#1A1A2E] shadow-lg transition-all duration-300 ease-in-out overflow-x-hidden ${sidebarWidth}`}
         onMouseEnter={() => !isMobile && setIsExpanded(true)}
         onMouseLeave={() => !isMobile && setIsExpanded(false)}
       >
