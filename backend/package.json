@@ -1,0 +1,14 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend API para EnsaioNuvens",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest"
+  },
+  "keywords": ["api", "nodejs", "express", "mysql"],
+  "author": "Equipe EnsaioNuvens",
+  "license": "MIT"
+}
