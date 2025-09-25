@@ -13,34 +13,84 @@ import {
 const EnsaioNuvensHome = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-purple-900 to-black overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1511671782779-c97d3d27d020?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center mix-blend-overlay"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative z-10 py-24 sm:py-32 lg:py-40">
-            <div className="text-center">
+      {/* Hero Section - Full Width */}
+      <div id="top" className="relative w-full overflow-hidden bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900"
+        style={{
+          minHeight: '600px',
+          display: 'flex',
+          alignItems: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          boxShadow: 'inset 0 0 50px rgba(0,0,0,0.5)'
+        }}>
+        {/* Brilho sutil */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent"></div>
+        {/* Destaque central */}
+        <div className="absolute inset-0 bg-radial-gradient(circle at 50% 50%, rgba(106,13,173,0.3), transparent 70%)"></div>
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
                 <span className="block">Ensaio nas Nuvens</span>
-                <span className="block text-purple-300">Modernize a gestão da sua banda ou orquestra</span>
+                <span className="block mt-4 text-purple-100">
+                  Modernize a gestão da sua banda ou orquestra
+                </span>
               </h1>
-              <p className="mt-6 max-w-lg mx-auto text-lg text-purple-100 sm:text-xl md:mt-8 md:max-w-3xl">
+              <p className="mt-6 mx-auto max-w-2xl text-lg text-gray-200 sm:text-xl md:mt-8">
                 Centralize a distribuição de partituras, facilite o acesso individualizado e torne a comunicação mais fluida entre os integrantes da banda.
               </p>
-              <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+              <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   to="/cadastro"
-                  className="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
+                  className="flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 md:text-lg md:px-10 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
                   Comece agora
                   <ArrowRightIcon className="ml-2 h-5 w-5" />
                 </Link>
                 <Link
                   to="/login"
-                  className="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-purple-900 bg-white hover:bg-gray-100 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
+                  className="flex items-center justify-center px-8 py-4 border-2 border-white/20 text-base font-medium rounded-md text-white bg-white/10 hover:bg-white/20 backdrop-blur-sm md:text-lg md:px-10 transition-all duration-200 hover:border-white/30"
                 >
                   Entrar
                   <ArrowRightIcon className="ml-2 h-5 w-5" />
                 </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Seção de Teste com Imagem */}
+      <div className="relative py-16 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
+            <div className="mb-10 lg:mb-0">
+              <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                <span className="block">Experimente Agora</span>
+                <span className="block text-purple-700">Veja como é fácil começar</span>
+              </h2>
+              <p className="mt-4 text-lg text-gray-600">
+                Nossa plataforma foi projetada para simplificar a gestão musical. 
+                Experimente gratuitamente e descubra como podemos ajudar você e sua banda.
+              </p>
+              <div className="mt-8">
+                <Link
+                  to="/cadastro"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  Testar Grátis
+                  <ArrowRightIcon className="ml-2 -mr-1 h-5 w-5" />
+                </Link>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="relative rounded-xl overflow-hidden shadow-2xl">
+                <img
+                  className="w-full h-auto"
+                  src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
+                  alt="Demonstração da plataforma"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
               </div>
             </div>
           </div>

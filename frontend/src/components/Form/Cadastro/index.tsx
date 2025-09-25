@@ -224,9 +224,9 @@ const CadastroForm = () => {
   };
 
   return (
-    <div className="w-full space-y-8">
+    <div className="w-full max-w-2xl mx-auto space-y-8">
       {/* Barra de progresso */}
-      <div className="mb-2">
+      <div className="mb-4">
         <ProgressSteps 
           currentStep={step} 
           totalSteps={totalSteps} 
@@ -236,22 +236,22 @@ const CadastroForm = () => {
       </div>
       
       {/* Conteúdo do formulário */}
-      <div className="w-full">
+      <div className="w-full bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         {renderStep()}
       </div>
       
       {/* Botões de navegação */}
-      <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-gray-100">
+      <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-100">
         {/* Botão Voltar */}
         <div className="w-full sm:w-1/3">
           <button
             type="button"
             onClick={prevStep}
             disabled={step === 1}
-            className={`px-4 py-3 rounded-lg font-medium transition-colors w-full ${
+            className={`px-6 py-3 rounded-lg font-medium transition-all w-full text-sm ${
               step === 1
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
             }`}
           >
             Voltar
@@ -265,10 +265,10 @@ const CadastroForm = () => {
               type="button"
               onClick={nextStep}
               disabled={isNextButtonDisabled()}
-              className={`px-4 py-3 rounded-lg font-medium transition-colors w-full ${
+              className={`px-6 py-3 rounded-lg font-medium transition-all w-full text-sm ${
                 isNextButtonDisabled()
-                  ? 'bg-purple-300 text-white cursor-not-allowed'
-                  : 'bg-purple-600 text-white hover:bg-purple-700'
+                  ? 'bg-purple-300 text-white cursor-not-allowed shadow-sm'
+                  : 'bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 shadow-sm hover:shadow-md'
               }`}
             >
               Próximo
@@ -277,7 +277,7 @@ const CadastroForm = () => {
             <button
               type="button"
               onClick={handleSubmit}
-              className="px-4 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors w-full"
+              className="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-medium hover:from-green-700 hover:to-green-800 transition-all w-full text-sm shadow-sm hover:shadow-md"
             >
               Finalizar Cadastro
             </button>

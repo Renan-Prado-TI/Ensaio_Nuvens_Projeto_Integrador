@@ -5,8 +5,11 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCoverflow, Pagination, Navigation, Autoplay } from 'swiper/modules';
 
-// Configuração dos módulos do Swiper
-export const swiperModules = [EffectCoverflow, Pagination, Navigation, Autoplay];
+// Importar estilos do Swiper
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
 // Components
 import MissionVision from '../../../components/EchoTech/MissionVision';
@@ -59,11 +62,11 @@ const teamMembers = [
 
 const EchoTechHome: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      {/* Hero Section */}
-      <div id="top" className="relative bg-gradient-to-r from-[#6A0DAD] to-black overflow-hidden">
+    <div className="echotech-home min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      {/* Hero Section - Full Width */}
+      <div id="top" className="hero-section relative bg-gradient-to-r from-[#6A0DAD] to-black overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center mix-blend-overlay"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="section-container">
           <div className="relative z-10 py-24 sm:py-32 lg:py-40">
             <div className="text-center">
               <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl">
@@ -93,21 +96,21 @@ const EchoTechHome: React.FC = () => {
         </div>
       </div>
 
-      {/* Quem Somos */}
-      <div id="quem-somos" className="py-16 bg-white scroll-mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Quem Somos - Full Width */}
+      <div id="quem-somos" className="section py-16 bg-white scroll-mt-16">
+        <div className="section-container">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
               Quem Somos
             </h2>
             <div className="mt-6 max-w-4xl mx-auto text-lg text-gray-600 text-left">
               <p className="mb-4">
-                Somos a EchoTech, um grupo formado por cinco estudantes do curso de Gestão da Tecnologia da Informação da FATEC Guaratinguetá. 
+                Somos a EchoTech, um grupo formado por cinco estudantes do curso de Gestão da Tecnologia da Informação da FATEC Guaratinguetá.
                 Acreditamos que a tecnologia tem um papel importante na vida das pessoas quando é usada para ouvir, entender e melhorar a rotina de quem está do outro lado.
               </p>
               <p>
-                Nosso propósito é criar soluções simples e inovadoras, que acompanhem a evolução do dia a dia e facilitem a vida de quem usa. 
-                Foi com esse pensamento que desenvolvemos nosso primeiro projeto: Ensaio nas Nuvens, uma plataforma moderna que ajuda gestores e 
+                Nosso propósito é criar soluções simples e inovadoras, que acompanhem a evolução do dia a dia e facilitem a vida de quem usa.
+                Foi com esse pensamento que desenvolvemos nosso primeiro projeto: Ensaio nas Nuvens, uma plataforma moderna que ajuda gestores e
                 maestros a organizarem os ensaios de forma prática e conectada, deixando o papel de lado e trazendo mais agilidade e organização para o ambiente musical.
               </p>
             </div>
@@ -125,9 +128,9 @@ const EchoTechHome: React.FC = () => {
         </div>
       </div>
 
-      {/* Nossa Equipe */}
-      <div id="nossa-equipe" className="py-16 bg-gray-50 scroll-mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Nossa Equipe - Full Width */}
+      <div id="nossa-equipe" className="section py-16 bg-gray-50 scroll-mt-16">
+        <div className="section-container">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
               Nossa Equipe
@@ -137,47 +140,61 @@ const EchoTechHome: React.FC = () => {
             </p>
           </div>
 
-          <div className="relative">
+          <div className="relative w-full overflow-hidden py-8">
             <Swiper
               effect={'coverflow'}
               grabCursor={true}
               centeredSlides={true}
+              loop={true}
               slidesPerView={'auto'}
               coverflowEffect={{
                 rotate: 0,
                 stretch: 0,
                 depth: 100,
-                modifier: 2.5,
+                modifier: 1,
                 slideShadows: false,
               }}
               pagination={{
                 clickable: true,
+                dynamicBullets: true,
               }}
               navigation={true}
               modules={[EffectCoverflow, Pagination, Navigation, Autoplay]}
-              className="mySwiper"
+              style={{
+                '--swiper-pagination-color': '#6A0DAD',
+                '--swiper-navigation-color': '#6A0DAD',
+                '--swiper-theme-color': '#6A0DAD'
+              } as React.CSSProperties}
+              className="w-full py-8"
               autoplay={{
-                delay: 5000,
+                delay: 3000,
                 disableOnInteraction: false,
+                pauseOnMouseEnter: true,
               }}
               breakpoints={{
                 320: {
                   slidesPerView: 1,
-                  spaceBetween: 20
+                  spaceBetween: 20,
+                },
+                640: {
+                  slidesPerView: 1.2,
+                  spaceBetween: 20,
                 },
                 768: {
                   slidesPerView: 2,
-                  spaceBetween: 30
+                  spaceBetween: 30,
                 },
                 1024: {
                   slidesPerView: 3,
-                  spaceBetween: 40
+                  spaceBetween: 40,
                 }
               }}
             >
               {teamMembers.map((member, index) => (
-                <SwiperSlide key={index} className="py-10">
-                  <TeamMember {...member} />
+                <SwiperSlide key={index} className="flex justify-center items-center py-10 px-2">
+                  <div className="w-full max-w-xs">
+                    <TeamMember {...member} />
+                  </div>
                 </SwiperSlide>
               ))}
             </Swiper>
@@ -185,58 +202,58 @@ const EchoTechHome: React.FC = () => {
         </div>
       </div>
 
-      {/* Contato */}
-      <div id="contato" className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Contato - Full Width */}
+      <div id="contato" className="section py-16 bg-gradient-to-br from-[#6A0DAD] via-[#4B0082] to-black text-white">
+        <div className="section-container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+            <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
               Entre em Contato
             </h2>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+            <p className="mt-4 max-w-2xl text-xl text-gray-200 mx-auto">
               Tem alguma dúvida ou sugestão? Fale conosco!
             </p>
           </div>
 
-          <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="max-w-3xl mx-auto bg-white/10 backdrop-blur-md rounded-xl shadow-2xl overflow-hidden border border-white/20">
             <div className="p-8">
               <form className="space-y-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nome</label>
+                  <label htmlFor="name" className="block text-sm font-medium text-white">Nome</label>
                   <input
                     type="text"
                     id="name"
                     name="name"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                    className="mt-1 block w-full border border-white/30 bg-white/10 text-white placeholder-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">E-mail</label>
+                  <label htmlFor="email" className="block text-sm font-medium text-white">E-mail</label>
                   <input
                     type="email"
                     id="email"
                     name="email"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                    className="mt-1 block w-full border border-white/30 bg-white/10 text-white placeholder-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700">Assunto</label>
+                  <label htmlFor="subject" className="block text-sm font-medium text-white">Assunto</label>
                   <input
                     type="text"
                     id="subject"
                     name="subject"
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                    className="mt-1 block w-full border border-white/30 bg-white/10 text-white placeholder-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700">Mensagem</label>
+                  <label htmlFor="message" className="block text-sm font-medium text-white">Mensagem</label>
                   <textarea
                     id="message"
                     name="message"
                     rows={4}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                    className="mt-1 block w-full border border-white/30 bg-white/10 text-white placeholder-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
                     required
                   ></textarea>
                 </div>
@@ -250,36 +267,36 @@ const EchoTechHome: React.FC = () => {
                 </div>
               </form>
             </div>
-            
-            {/* Informações de Contato - Agora abaixo do formulário */}
-            <div className="bg-gradient-to-b from-[#6A0DAD] to-black p-8 text-center text-white">
-              <h3 className="text-2xl font-bold mb-4">Informações de Contato</h3>
-              <p className="mb-6">Estamos ansiosos para ouvir de você!</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+
+            {/* Informações de Contato - Sem plano de fundo */}
+            <div className="p-8 border-t border-white/10">
+              <h3 className="text-2xl font-bold text-white text-center mb-4">Informações de Contato</h3>
+              <p className="text-gray-200 text-center mb-8">Estamos ansiosos para ouvir de você!</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div className="flex flex-col items-center">
-                  <div className="p-3 bg-purple-600 rounded-full mb-2">
+                  <div className="p-3 bg-white/20 rounded-full mb-3">
                     <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <p className="text-purple-100">contato@echotech.com</p>
+                  <p className="text-white text-center">contato@echotech.com</p>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="p-3 bg-purple-600 rounded-full mb-2">
+                  <div className="p-3 bg-white/20 rounded-full mb-3">
                     <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
                   </div>
-                  <p className="text-purple-100">+55 (12) 3456-7890</p>
+                  <p className="text-white text-center">+55 (12) 3456-7890</p>
                 </div>
                 <div className="flex flex-col items-center">
-                  <div className="p-3 bg-purple-600 rounded-full mb-2">
+                  <div className="p-3 bg-white/20 rounded-full mb-3">
                     <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </div>
-                  <p className="text-purple-100">FATEC Guaratinguetá<br />Guaratinguetá - SP</p>
+                  <p className="text-white text-center">FATEC Guaratinguetá<br />Guaratinguetá - SP</p>
                 </div>
               </div>
             </div>

@@ -2,16 +2,15 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   HomeIcon, 
-  XMarkIcon,
-  Bars3Icon,
-  ArrowLeftOnRectangleIcon,
   MusicalNoteIcon,
   UserPlusIcon,
   UserGroupIcon,
   BellIcon,
   ClipboardDocumentListIcon,
   Cog6ToothIcon,
-  UserCircleIcon
+  UserCircleIcon,
+  ArrowLeftOnRectangleIcon,
+  Bars3Icon
 } from '@heroicons/react/24/outline';
 
 interface NavItemType {
@@ -23,23 +22,16 @@ interface NavItemType {
 }
 
 interface SidebarProps {
-  mobileOpen?: boolean;
-  onMobileClose?: () => void;
-}
-
-interface NavItemProps {
-  item: NavItemType;
-  isExpanded: boolean;
-  isActive: boolean;
-  onMobileClose?: () => void;
+  isExpanded?: boolean;
+  onToggleExpand?: () => void;
 }
 
 // Componente para o título Echo Tech com cores diferentes
 const EchoTechTitle = () => (
-  <span>
+  <div className="flex items-center">
     <span className="text-[#9B59B6]">Echo</span>
     <span className="text-[#E0E0E0]">Tech</span>
-  </span>
+  </div>
 );
 
 // Definição dos itens de navegação do Gestor
@@ -49,7 +41,7 @@ const gestorNavigation: NavItemType[] = [
     name: 'Dashboard',
     href: '/gestor', 
     icon: HomeIcon,
-    current: true
+    current: false
   },
   { 
     id: 'bandas',
@@ -102,7 +94,7 @@ const topNavigation: NavItemType[] = [
     name: 'Echo Tech',
     href: '/', 
     icon: HomeIcon,
-    current: true
+    current: false
   },
   { 
     id: 'ensaionuvens',
@@ -132,36 +124,42 @@ const bottomNavigation: NavItemType[] = [
 ];
 
 // Função auxiliar para classes condicionais
-function classNames(...classes: string[]) {
+function classNames(...classes: (string | boolean | undefined)[]): string {
   return classes.filter(Boolean).join(' ');
 }
 
 // Componente de item de navegação
-function NavItem({ item, isExpanded, isActive, onMobileClose }: NavItemProps) {
+function NavItem({ item, isExpanded, isActive, onMobileClose }: { 
+  item: NavItemType; 
+  isExpanded: boolean; 
+  isActive: boolean;
+  onMobileClose?: () => void;
+}) {
   return (
     <Link
       to={item.href}
       className={classNames(
-        isActive
-          ? 'bg-[#6A0DAD] text-white'
-          : 'text-gray-300 hover:bg-[#4B0082] hover:text-white',
-        'group flex items-center px-4 py-3 text-sm font-medium rounded-md transition-all duration-200',
-        isExpanded ? 'px-4' : 'justify-center'
+        isActive 
+          ? 'text-white bg-[rgba(106,13,173,0.2)] border-l-2 border-[#6A0DAD]' 
+          : 'text-[#C0C0C0] hover:bg-[rgba(255,255,255,0.03)] hover:text-white',
+        'group flex items-center transition-all duration-200',
+        isExpanded ? 'px-4 py-2.5 mx-1.5' : 'justify-center py-2.5',
+        'text-sm font-medium'
       )}
       onClick={() => onMobileClose && onMobileClose()}
     >
       <item.icon
         className={classNames(
-          isActive ? 'text-white' : 'text-gray-300 group-hover:text-white',
-          'h-6 w-6 flex-shrink-0',
-          isExpanded ? 'mr-3' : 'mx-auto'
+          isActive ? 'text-white' : 'text-[#C0C0C0] group-hover:text-white',
+          'flex-shrink-0 transition-colors duration-200',
+          isExpanded ? 'h-5 w-5 mr-3' : 'h-5 w-5 mx-auto'
         )}
         aria-hidden="true"
       />
-      <span 
+      <span
         className={classNames(
           'whitespace-nowrap',
-          isExpanded ? 'opacity-100' : 'lg:opacity-0 lg:w-0 lg:overflow-hidden',
+          isExpanded ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden',
           'transition-all duration-300'
         )}
       >
@@ -171,195 +169,131 @@ function NavItem({ item, isExpanded, isActive, onMobileClose }: NavItemProps) {
   );
 }
 
-export default function Sidebar({ 
-  mobileOpen = false, 
-  onMobileClose = () => {} 
-}: SidebarProps) {
+const Sidebar: React.FC<SidebarProps> = ({ 
+  isExpanded = false,
+  onToggleExpand = () => {}
+}) => {
   const location = useLocation();
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isClientSide, setIsClientSide] = useState(false);
 
-  // Atualiza o estado de mobile quando a janela for redimensionada
+  // Garante que o componente está no cliente para evitar problemas de hidratação
+  useEffect(() => {
+    setIsClientSide(true);
+    const isMobileView = window.innerWidth < 1024;
+    setIsMobile(isMobileView);
+  }, []);
+
+  // Atualiza o estado de mobile quando a tela for redimensionada
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 1024;
       setIsMobile(mobile);
       if (!mobile) {
-        setIsExpanded(true);
-      } else {
-        setIsExpanded(false);
+        setIsHovered(false);
       }
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize();
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Verifica se o item está ativo
-  const isActive = (path: string) => {
-    // Verifica se o caminho atual começa com o caminho do item
-    // Isso permite que subrotas sejam destacadas corretamente
+  const isActive = (path: string): boolean => {
     return location.pathname.startsWith(path) || 
            (path === '/' && location.pathname === '/');
   };
+  
+  // Filtra os itens de navegação baseado no caminho atual
+  const getFilteredNavItems = (navItems: NavItemType[]): NavItemType[] => {
+    return navItems.map(item => ({
+      ...item,
+      current: isActive(item.href)
+    }));
+  };
 
-  const sidebarWidth = isExpanded ? 'w-64' : 'w-20';
-
+  // Determina se o sidebar deve aparecer expandido
+  const shouldExpand = isExpanded || (!isMobile && isHovered);
+  
   return (
-    <>
-      {/* Mobile sidebar */}
-      <div
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-[#1A1A2E] shadow-lg transform transition-transform duration-300 ease-in-out lg:hidden ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between h-16 bg-[#6A0DAD] px-4">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
+    <div 
+      className={`flex flex-col h-screen transition-all duration-300 ${shouldExpand ? 'w-64' : 'w-20'}`}
+      style={{
+        backgroundColor: 'rgb(30, 30, 50)', /* Tom de roxo mais claro que o fundo */
+        borderRight: '1px solid rgba(255, 255, 255, 0.03)',
+        boxShadow: '2px 0 8px rgba(0, 0, 0, 0.1)'
+      }}
+      onMouseEnter={() => !isMobile && setIsHovered(true)}
+      onMouseLeave={() => !isMobile && setIsHovered(false)}
+    >
+      {/* Cabeçalho fixo */}
+      <div className="flex-shrink-0 relative">
+        <div className="flex items-center justify-center h-16 bg-[rgb(var(--color-primary))] px-4">
+          {isClientSide && (
+            <div className="flex items-center justify-center w-full transition-all duration-300">
+              <div className={`flex items-center justify-center w-full transition-opacity duration-300 ${
+                shouldExpand ? 'opacity-100' : 'opacity-0'
+              }`}>
                 <EchoTechTitle />
               </div>
-            </div>
-            <button
-              type="button"
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-[#4B0082] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-              onClick={onMobileClose}
-            >
-              <span className="sr-only">Fechar menu</span>
-              <XMarkIcon className="w-6 h-6" aria-hidden="true" />
-            </button>
-          </div>
-
-          <div className="flex flex-col h-full overflow-y-auto">
-            {/* Navegação do Gestor */}
-            <div className="px-4 py-3 border-b border-gray-700">
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Menu do Gestor
-              </h3>
-            </div>
-            <div className="px-2 py-4 space-y-1">
-              {gestorNavigation.map((item) => (
-                <NavItem
-                  key={item.id}
-                  item={item}
-                  isExpanded={true}
-                  isActive={isActive(item.href)}
-                  onMobileClose={onMobileClose}
-                />
-              ))}
-            </div>
-
-            <div className="px-4 py-3 border-t border-b border-gray-700">
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Navegação
-              </h3>
-            </div>
-            <div className="px-2 py-4 space-y-1">
-              {topNavigation.map((item) => (
-                <NavItem
-                  key={item.id}
-                  item={item}
-                  isExpanded={true}
-                  isActive={isActive(item.href)}
-                  onMobileClose={onMobileClose}
-                />
-              ))}
-            </div>
-
-            {/* Navegação inferior */}
-            <div className="px-2 py-4 border-t border-gray-700">
-              {bottomNavigation.map((item) => (
-                <NavItem
-                  key={item.id}
-                  item={item}
-                  isExpanded={true}
-                  isActive={isActive(item.href)}
-                  onMobileClose={onMobileClose}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop sidebar */}
-      <div
-        className={`hidden lg:flex lg:flex-col bg-[#1A1A2E] shadow-lg transition-all duration-300 ease-in-out overflow-x-hidden ${sidebarWidth}`}
-        onMouseEnter={() => !isMobile && setIsExpanded(true)}
-        onMouseLeave={() => !isMobile && setIsExpanded(false)}
-      >
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-center h-16 bg-[#6A0DAD] flex-shrink-0">
-            <div className="flex items-center justify-center flex-shrink-0 w-full px-4">
-              {isExpanded ? (
-                <EchoTechTitle />
-              ) : (
-                <Bars3Icon className="w-8 h-8 text-white" />
+              {!shouldExpand && (
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                  <div className="h-8 w-8 flex items-center justify-center text-white/80 hover:text-white transition-colors duration-200">
+                    <Bars3Icon className="h-5 w-5" />
+                  </div>
+                </div>
               )}
             </div>
-          </div>
-
-          {/* Container principal com altura fixa e scroll */}
-          <div className="flex-1 overflow-y-auto min-h-0">
-            {/* Navegação do Gestor */}
-            <div className="px-4 py-3 border-b border-gray-700">
-              <h3 className={`text-xs font-semibold text-gray-400 uppercase tracking-wider transition-opacity duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
-                Menu do Gestor
-              </h3>
-            </div>
-            <div className="px-2 py-4 space-y-1">
-              {gestorNavigation.map((item) => (
-                <NavItem
-                  key={item.id}
-                  item={item}
-                  isExpanded={isExpanded}
-                  isActive={isActive(item.href)}
-                />
-              ))}
-            </div>
-
-            <div className="px-4 py-3 border-t border-b border-gray-700">
-              <h3 className={`text-xs font-semibold text-gray-400 uppercase tracking-wider transition-opacity duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
-                Navegação
-              </h3>
-            </div>
-            <div className="px-2 py-4 space-y-1">
-              {topNavigation.map((item) => (
-                <NavItem
-                  key={item.id}
-                  item={item}
-                  isExpanded={isExpanded}
-                  isActive={isActive(item.href)}
-                />
-              ))}
-            </div>
-
-            {/* Navegação inferior */}
-            <div className="px-2 py-4 border-t border-gray-700">
-              {bottomNavigation.map((item) => (
-                <NavItem
-                  key={item.id}
-                  item={item}
-                  isExpanded={isExpanded}
-                  isActive={isActive(item.href)}
-                />
-              ))}
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* Overlay para mobile */}
-      {mobileOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-black bg-opacity-50 transition-opacity lg:hidden"
-          onClick={onMobileClose}
-        />
-      )}
-    </>
+      {/* Conteúdo rolável */}
+      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600/20 scrollbar-track-transparent hover:scrollbar-thumb-gray-500/30">
+        {/* Navegação superior */}
+        <nav className="px-2 py-4 space-y-1">
+          {getFilteredNavItems(topNavigation).map((item) => (
+            <NavItem
+              key={item.id}
+              item={item}
+              isExpanded={shouldExpand}
+              isActive={isActive(item.href)}
+              onMobileClose={isMobile ? () => onToggleExpand() : undefined}
+            />
+          ))}
+        </nav>
+
+        {/* Navegação principal */}
+        <nav className="px-2 py-4 space-y-1">
+          {getFilteredNavItems(gestorNavigation).map((item) => (
+            <NavItem
+              key={item.id}
+              item={item}
+              isExpanded={shouldExpand}
+              isActive={isActive(item.href)}
+              onMobileClose={isMobile ? () => onToggleExpand() : undefined}
+            />
+          ))}
+        </nav>
+      </div>
+
+      {/* Navegação inferior */}
+      <div className="flex-shrink-0 border-t border-white/5 pt-2">
+        <nav className="px-2 space-y-1">
+          {getFilteredNavItems(bottomNavigation).map((item) => (
+            <NavItem
+              key={item.id}
+              item={item}
+              isExpanded={shouldExpand}
+              isActive={isActive(item.href)}
+              onMobileClose={isMobile ? () => onToggleExpand() : undefined}
+            />
+          ))}
+        </nav>
+      </div>
+    </div>
   );
-}
+};
+
+export default Sidebar;

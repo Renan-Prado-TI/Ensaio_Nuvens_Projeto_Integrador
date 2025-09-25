@@ -1,63 +1,54 @@
 import type { ReactNode } from 'react';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import GradientBackground from '../ui/GradientBackground';
 
 interface AuthLayoutProps {
   children: ReactNode;
-  title: string;
+  title: React.ReactNode;
   subtitle?: string;
-  footerText?: string;
-  footerLink?: {
-    text: string;
-    to: string;
-  };
+  hideSubtitle?: boolean;
 }
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({
   children,
   title,
   subtitle,
-  footerText,
-  footerLink,
+  hideSubtitle = false,
 }) => {
   return (
-    <div className="min-h-screen w-full relative">
-      <GradientBackground />
-      <div className="main-container">
-        <div className="w-full flex flex-col items-center">
-          <div className="cadastro-container">
-            {/* Cabeçalho */}
-            <div className="cabecalho-formulario">
-              <h1 className="text-2xl sm:text-3xl font-bold text-white">
-                {title}
-              </h1>
-              {subtitle && (
-                <p className="mt-1 sm:mt-2 text-sm sm:text-base text-white/90">
-                  {subtitle}
-                </p>
-              )}
-            </div>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-grow flex items-center justify-center p-4 sm:p-6 relative w-full">
+        <GradientBackground />
+        <div className="w-full max-w-2xl mx-auto z-10 px-4">
+          {/* Cabeçalho */}
+          <div className="text-center mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">
+              {title}
+            </h1>
+            {!hideSubtitle && subtitle && (
+              <p className="mt-2 sm:mt-3 text-sm sm:text-base text-white opacity-95 font-medium">
+                {subtitle}
+              </p>
+            )}
+          </div>
 
-            {/* Container do Formulário com Background */}
-            <div className="formulario-container">
+          {/* Container do Formulário */}
+          <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20 w-full">
+            <div className="p-6 sm:p-8 w-full">
               {children}
             </div>
           </div>
         </div>
-
-        {/* Rodapé */}
-        {(footerText || footerLink) && (
-          <div className="auth-footer">
-            {footerText}
-            {footerLink && (
-              <Link to={footerLink.to}>
-                {footerLink.text}
-              </Link>
-            )}
-          </div>
-        )}
       </div>
+
+      {/* Rodapé */}
+      <footer className="bg-white border-t border-gray-200 py-4 w-full mt-auto">
+        <div className="w-full px-4 sm:px-6">
+          <p className="text-sm text-gray-500 text-center">
+            © 2024 EnsaioNuvens. Todos os direitos reservados.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };

@@ -49,9 +49,16 @@ function App() {
         } />
         
         {/* Páginas de Autenticação */}
-        <Route path="/login" element={<Login />} />
-        
-        <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/login" element={
+          <MainLayout>
+            <Login />
+          </MainLayout>
+        } />
+        <Route path="/cadastro" element={
+          <MainLayout>
+            <Cadastro />
+          </MainLayout>
+        } />
         
         {/* Rotas do Gestor */}
         <Route path="/gestor/*" element={
