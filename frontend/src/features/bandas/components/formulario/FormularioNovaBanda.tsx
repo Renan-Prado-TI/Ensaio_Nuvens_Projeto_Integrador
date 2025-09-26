@@ -1,116 +1,95 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, Loader2 } from 'lucide-react';
+import { buscarBandaPorId, criarBanda, atualizarBanda } from '../../api/mockBandaService';
 import Button from '@/components/ui/button';
 import { Etapa1DadosBasicos } from './Etapa1DadosBasicos';
 import { Etapa2Endereco } from './Etapa2Endereco';
 import { Etapa3Instrumentos } from './Etapa3Instrumentos';
 import { Etapa4Revisao } from './Etapa4Revisao';
-import { criarBanda } from '../../api/mockBandaService';
 
-// Tipos para o formulário
-type FormValues = {
-  logo?: File;
-  nome: string;
-  nomeArtistico?: string;
-  fundacao?: string;
-  cnpj?: string;
-  telefone: string;
-  email: string;
-  descricao: string;
-  facebook?: string;
-  instagram?: string;
-  youtube?: string;
-  linkedin?: string;
-  tiktok?: string;
-  site?: string;
-  endereco: {
-    cep: string;
-    logradouro: string;
-    numero: string;
-    complemento?: string;
-    bairro: string;
-    cidade: string;
-    estado: string;
-    referencia?: string;
-  };
-  instrumentos: Array<{
-    id: string;
+import { DadosBandaFormulario } from './types';
+
+// Tipo para o formulário que estende DadosBandaFormulario
+interface FormValues extends Omit<DadosBandaFormulario, 'instrumentos'> {
+  instrumentos?: Array<{
+    id?: string;
     nome: string;
-    quantidade: number;
+    quantidade?: number;
   }>;
-};
+}
 
-// Esquema de validação para cada etapa
-const esquemaEtapa1 = z.object({
+// Esquema de validação do formulário
+const schemaValidacao = z.object({
+  // Dados básicos
   nome: z.string().min(2, 'O nome deve ter pelo menos 2 caracteres'),
   telefone: z.string()
     .min(1, 'Telefone é obrigatório')
-    .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, 'Formato inválido. Use (00) 00000-0000'),
+    .regex(/\(\d{2}\) \d{4,5}-\d{4}/, 'Formato inválido. Use (00) 00000-0000'),
   email: z.string()
     .min(1, 'Email é obrigatório')
     .email('Por favor, insira um email válido'),
   descricao: z.string().min(10, 'A descrição deve ter pelo menos 10 caracteres'),
-  fundacao: z.string().optional()
-    .refine(date => {
-      if (!date) return true; // Campo opcional
-      return !isNaN(Date.parse(date));
-    }, { message: 'Data de fundação inválida' }),
+  fundacao: z.string().optional(),
   facebook: z.string().url('URL inválida').or(z.literal('')).optional(),
   instagram: z.string().url('URL inválida').or(z.literal('')).optional(),
   youtube: z.string().url('URL inválida').or(z.literal('')).optional(),
   linkedin: z.string().url('URL inválida').or(z.literal('')).optional(),
   tiktok: z.string().url('URL inválida').or(z.literal('')).optional(),
-  site: z.string().url('URL inválida').or(z.literal('')).optional()
-});
-
-const esquemaEtapa2 = z.object({
+  site: z.string().url('URL inválida').or(z.literal('')).optional(),
+  
+  // Endereço
   endereco: z.object({
     cep: z.string()
-      .regex(/^\d{5}-\d{3}$/, 'Formato inválido. Use 00000-000')
-      .transform(cep => cep.replace(/\D/g, '')), // Remove formatação para armazenar apenas números
+      .regex(/^\d{5}-\d{3}$/, 'Formato inválido. Use 00000-000'),
     logradouro: z.string().min(3, 'Logradouro inválido'),
     numero: z.string().min(1, 'Número é obrigatório'),
+    complemento: z.string().optional(),
+    bairro: z.string().min(2, 'Bairro inválido'),
     cidade: z.string().min(2, 'Cidade inválida'),
     estado: z.string().length(2, 'Selecione um estado'),
-  })
-});
-
-const esquemaEtapa3 = z.object({
+    referencia: z.string().optional()
+  }),
+  
+  // Instrumentos (validação mais tolerante para evitar loops)
   instrumentos: z.array(z.object({
-    id: z.string(),
+    id: z.string().optional(),
     nome: z.string().min(1, 'Nome do instrumento é obrigatório'),
-    quantidade: z.number().min(1, 'A quantidade deve ser pelo menos 1'),
-  })).min(1, 'Adicione pelo menos um instrumento')
+    quantidade: z.number().min(1, 'A quantidade deve ser pelo menos 1').default(1)
+  })).min(1, 'Adicione pelo menos um instrumento').default([])
 });
 
 const FormularioNovaBanda = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [etapaAtual, setEtapaAtual] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [bandaId, setBandaId] = useState<string | null>(null);
   const totalEtapas = 4;
 
-  // Inicializa o formulário com valores padrão
-  const getResolverForStep = (step: number) => {
-    switch (step) {
-      case 1: return zodResolver(esquemaEtapa1 as any);
-      case 2: return zodResolver(esquemaEtapa2 as any);
-      case 3: return zodResolver(esquemaEtapa3 as any);
-      default: return undefined;
-    }
-  };
 
   const methods = useForm<FormValues>({
-    resolver: getResolverForStep(etapaAtual),
+    resolver: zodResolver(schemaValidacao),
     defaultValues: {
       nome: '',
-      telefone: '',
+      nomeArtistico: '',
+      fundacao: '',
       cnpj: '',
+      telefone: '',
+      email: '',
       descricao: '',
+      facebook: '',
+      instagram: '',
+      youtube: '',
+      linkedin: '',
+      tiktok: '',
+      site: '',
       endereco: {
         cep: '',
         logradouro: '',
@@ -121,53 +100,93 @@ const FormularioNovaBanda = () => {
         estado: '',
         referencia: ''
       },
-      instrumentos: [],
-      facebook: '',
-      instagram: '',
-      youtube: '',
-      linkedin: '',
-      tiktok: '',
-      site: ''
-    },
+      instrumentos: [{
+        id: crypto.randomUUID(),
+        nome: 'Vocal',
+        quantidade: 1
+      }]
+    }
   });
 
-  const { trigger, formState: { isValid } } = methods;
-
-  // Função para avançar para a próxima etapa
-  const proximaEtapa = useCallback(async () => {
-    console.log('Avançando para a próxima etapa...');
-
-    // Força a validação dos campos da etapa atual
-    const isStepValid = await trigger(undefined, { shouldFocus: true });
-    console.log('Validação da etapa atual:', isStepValid);
-
-    if (isStepValid) {
-      console.log('Etapa válida, avançando...');
-      const nextEtapa = Math.min(etapaAtual + 1, totalEtapas);
-
-      // Atualiza a etapa
-      setEtapaAtual(nextEtapa);
-
-      // Rola para o topo do formulário
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      console.log('Etapa inválida, exibindo erros...');
-
-      // Rola para o primeiro erro, se houver
-      const errorElement = document.querySelector('.text-red-500');
-      if (errorElement) {
-        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+  // Efeito para verificar se estamos no modo de edição
+  useEffect(() => {
+    const editarId = searchParams.get('editar');
+    if (editarId) {
+      setIsEditMode(true);
+      setBandaId(editarId);
+      carregarBanda(editarId);
     }
-  }, [trigger, etapaAtual, totalEtapas]);
+  }, [searchParams]);
 
-  // Volta para a etapa anterior
-  const etapaAnterior = () => {
-    setEtapaAtual(prev => Math.max(prev - 1, 1));
+  // Função para carregar os dados da banda para edição
+  const carregarBanda = async (id: string) => {
+    try {
+      setIsLoading(true);
+      console.log(`Carregando banda com ID: ${id} para edição...`);
+      
+      const banda = await buscarBandaPorId(parseInt(id));
+      
+      if (banda) {
+        console.log('Dados da banda carregados:', banda);
+        
+        // Formata os dados para o formulário
+        const dadosFormatados: FormValues = {
+          nome: banda.nome || '',
+          nomeArtistico: banda.nomeArtistico || '',
+          fundacao: banda.fundacao || '',
+          cnpj: banda.cnpj || '',
+          telefone: banda.telefone || '',
+          email: banda.email || '',
+          descricao: banda.descricao || '',
+          facebook: banda.redesSociais?.facebook || '',
+          instagram: banda.redesSociais?.instagram || '',
+          youtube: banda.redesSociais?.youtube || '',
+          linkedin: banda.redesSociais?.linkedin || '',
+          tiktok: banda.redesSociais?.tiktok || '',
+          site: banda.redesSociais?.site || '',
+          endereco: {
+            cep: banda.endereco?.cep || '',
+            logradouro: banda.endereco?.logradouro || '',
+            numero: banda.endereco?.numero || '',
+            complemento: banda.endereco?.complemento || '',
+            bairro: banda.endereco?.bairro || '',
+            cidade: banda.endereco?.cidade || '',
+            estado: banda.endereco?.estado || '',
+            referencia: banda.endereco?.referencia || ''
+          },
+          instrumentos: Array.isArray(banda.instrumentos) && banda.instrumentos.length > 0
+            ? banda.instrumentos.map(instr => ({
+                id: instr.id || crypto.randomUUID(),
+                nome: instr.nome || 'Novo Instrumento',
+                quantidade: typeof instr.quantidade === 'number' ? instr.quantidade : 1
+              }))
+            : [{
+                id: crypto.randomUUID(),
+                nome: 'Vocal',
+                quantidade: 1
+              }]
+        };
+        
+        // Preenche o formulário com os dados da banda
+        methods.reset(dadosFormatados);
+        console.log('Formulário preenchido com os dados da banda');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar banda para edição:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
+  
+  const { getValues } = methods;
 
-  // Função para formatar os dados para o formato esperado pela API
-  const formatarDadosParaAPI = useCallback((data: FormValues): any => {
+  // Função para voltar para a etapa anterior
+  const etapaAnterior = useCallback(() => {
+    setEtapaAtual(prev => Math.max(prev - 1, 1));
+  }, []);
+
+  // Função para formatar os dados para a API
+  const formatarDadosParaAPI = useCallback((data: FormValues) => {
     console.log('=== INÍCIO DA FUNÇÃO formatarDadosParaAPI ===');
     console.log('Iniciando formatação dos dados para a API...');
 
@@ -242,10 +261,10 @@ const FormularioNovaBanda = () => {
           estado: data.endereco.estado,
           referencia: data.endereco.referencia || ''
         },
-        instrumentos: data.instrumentos.map(instr => ({
-          id: String(instr.id),
+        instrumentos: (data.instrumentos || []).map(instr => ({
+          id: String(instr.id || crypto.randomUUID()),
           nome: instr.nome,
-          quantidade: instr.quantidade,
+          quantidade: instr.quantidade || 1,
           descricao: ''
         })),
         musicos: [], // Inicializa o array de músicos vazio
@@ -343,6 +362,56 @@ const FormularioNovaBanda = () => {
     }
   }, [methods, onSubmit]);
 
+  // Função para validar os campos da etapa atual
+  const validarEtapaAtual = useCallback(async () => {
+    try {
+      // Campos a serem validados em cada etapa
+      const camposPorEtapa = {
+        1: ['nome', 'telefone', 'email', 'descricao'],
+        2: ['endereco.cep', 'endereco.logradouro', 'endereco.numero', 'endereco.bairro', 'endereco.cidade', 'endereco.estado'],
+        3: ['instrumentos']
+      };
+
+      const camposParaValidar = camposPorEtapa[etapaAtual as keyof typeof camposPorEtapa] || [];
+      
+      // Se não há campos específicos para validar, considera como válido
+      if (camposParaValidar.length === 0) return true;
+      
+      // Valida apenas os campos da etapa atual
+      const isEtapaValida = await methods.trigger(camposParaValidar as any, { shouldFocus: true });
+      
+      if (!isEtapaValida) {
+        // Rola até o primeiro erro
+        const primeiroErro = document.querySelector('.text-red-600');
+        if (primeiroErro) {
+          primeiroErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      
+      return isEtapaValida;
+    } catch (error) {
+      console.error('Erro ao validar etapa:', error);
+      return false;
+    }
+  }, [etapaAtual, methods]);
+
+  // Função para avançar para a próxima etapa
+  const handleNextClick = useCallback(async () => {
+    try {
+      const isEtapaValida = await validarEtapaAtual();
+      
+      if (isEtapaValida) {
+        const nextEtapa = Math.min(etapaAtual + 1, totalEtapas);
+        setEtapaAtual(nextEtapa);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        console.log('Etapa inválida, corrija os erros antes de continuar');
+      }
+    } catch (error) {
+      console.error('Erro ao avançar etapa:', error);
+    }
+  }, [etapaAtual, totalEtapas, validarEtapaAtual]);
+
   // Renderiza a etapa atual
   const renderizarEtapa = () => {
     switch (etapaAtual) {
@@ -353,82 +422,75 @@ const FormularioNovaBanda = () => {
       case 3:
         return <Etapa3Instrumentos />;
       case 4:
-        return <Etapa4Revisao onSubmit={handleSubmitRevisao} />;
+        return <Etapa4Revisao 
+          onSubmit={handleSubmitRevisao} 
+          dadosSalvos={getValues()}
+          etapasSalvas={new Set([1, 2, 3, 4])}
+        />;
       default:
         return null;
     }
   };
-
-  // Renderiza o indicador de progresso
-  const renderizarProgresso = () => {
-    return (
-      <div className="w-full mb-8 max-w-3xl mx-auto">
-        <div className="relative">
-          {/* Linha de progresso */}
-          <div className="absolute top-5 left-0 right-0 h-1.5 bg-muted z-0 mx-16">
-            <div
-              className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-300 rounded-full"
-              style={{ width: `${((etapaAtual - 1) / (totalEtapas - 1)) * 100}%` }}
-            />
-          </div>
-
-          {/* Passos */}
-          <div className="relative z-10 flex justify-between">
-            {[1, 2, 3, 4].map((etapa) => (
-              <div key={etapa} className="flex flex-col items-center flex-1">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 relative transition-colors duration-300 ${
-                    etapa <= etapaAtual
-                      ? 'bg-gradient-to-br from-primary to-primary/90 text-white border-primary'
-                      : 'bg-background text-muted-foreground border-muted'
-                  }`}
-                >
-                  {etapa < etapaAtual ? (
-                    <Check className="w-5 h-5" />
-                  ) : (
-                    <span className="font-medium">{etapa}</span>
-                  )}
-                </div>
-                <span className={`text-xs mt-2 text-center font-medium transition-colors duration-300 ${
-                  etapa <= etapaAtual ? 'text-foreground' : 'text-muted-foreground'
-                }`}>
-                  {etapa === 1 && 'Dados'}
-                  {etapa === 2 && 'Endereço'}
-                  {etapa === 3 && 'Instrumentos'}
-                  {etapa === 4 && 'Revisão'}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Função para lidar com o clique no botão de próxima etapa
-  const handleNextClick = async () => {
-    if (etapaAtual >= totalEtapas) {
-      return;
-    }
-    await proximaEtapa();
-  };
-
+  // Renderiza o componente principal do formulário
   return (
     <FormProvider {...methods}>
-      <form onSubmit={(e) => e.preventDefault()} className="space-y-8">
-        {renderizarProgresso()}
+      <form onSubmit={(e) => e.preventDefault()} className="max-w-4xl mx-auto bg-primary-50 p-8 rounded-xl shadow-lg border border-primary-100">
+        {/* Indicador de progresso */}
+        <div className="w-full mb-8 max-w-3xl mx-auto">
+          <div className="relative">
+            {/* Linha de progresso */}
+            <div className="absolute top-5 left-0 right-0 h-1.5 bg-gray-200 z-0 mx-16 rounded-full">
+              <div
+                className="h-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-300 rounded-full"
+                style={{ width: `${((etapaAtual - 1) / (totalEtapas - 1)) * 100}%` }}
+              />
+            </div>
 
-        <div className="space-y-6">
+            {/* Passos */}
+            <div className="relative z-10 flex justify-between">
+              {[1, 2, 3, 4].map((etapa) => (
+                <div key={etapa} className="flex flex-col items-center flex-1">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center border-2 relative transition-colors duration-300 ${
+                      etapa <= etapaAtual
+                        ? 'bg-gradient-to-br from-primary-600 to-primary-700 text-white border-primary-600'
+                        : 'bg-white text-gray-400 border-gray-200'
+                    }`}
+                  >
+                    {etapa < etapaAtual ? (
+                      <Check className="w-5 h-5" />
+                    ) : (
+                      <span className="font-medium">{etapa}</span>
+                    )}
+                  </div>
+                  <span className={`text-xs mt-2 text-center font-medium transition-colors duration-300 ${
+                    etapa <= etapaAtual ? 'text-primary-800 font-semibold' : 'text-gray-500'
+                  }`}>
+                    {etapa === 1 && 'Dados'}
+                    {etapa === 2 && 'Endereço'}
+                    {etapa === 3 && 'Instrumentos'}
+                    {etapa === 4 && 'Revisão'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Conteúdo da etapa atual */}
+        <div className="space-y-6 mt-6 bg-white/90 p-8 rounded-xl border border-primary-100 shadow-sm">
           {renderizarEtapa()}
         </div>
 
-        <div className="flex justify-between pt-6 border-t">
+        {/* Navegação */}
+        <div className="flex justify-between items-center pt-8 mt-8 border-t border-primary-100">
           <div>
             {etapaAtual > 1 && (
               <Button
                 type="button"
                 variant="outline"
                 onClick={etapaAnterior}
+                className="flex items-center gap-2 text-primary-700 hover:bg-primary-50 px-6 py-2.5 rounded-lg border border-primary-200 transition-colors hover:border-primary-300"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Voltar
@@ -436,12 +498,13 @@ const FormularioNovaBanda = () => {
             )}
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             {etapaAtual < totalEtapas ? (
               <Button
                 type="button"
                 onClick={handleNextClick}
-                disabled={!isValid || isSubmitting}
+                disabled={isSubmitting}
+                className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-2.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
               >
                 {isSubmitting ? 'Salvando...' : 'Próximo'}
                 {!isSubmitting && <ArrowRight className="w-4 h-4 ml-2" />}
@@ -451,7 +514,7 @@ const FormularioNovaBanda = () => {
                 type="button"
                 onClick={handleSubmitRevisao}
                 disabled={isSubmitting}
-                className="min-w-[180px]"
+                className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg min-w-[180px]"
               >
                 {isSubmitting ? (
                   <>

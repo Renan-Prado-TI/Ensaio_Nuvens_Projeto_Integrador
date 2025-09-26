@@ -1,29 +1,52 @@
-/// <reference types="@types/swiper" />
-
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-// https://vite.dev/config/
+// Get the directory name in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// https://vitejs.dev/config/
 export default defineConfig({
+  base: '/',
+  plugins: [react()],
   server: {
     port: 3000,
-    strictPort: true,
-    host: true,
     open: true,
+    host: true,
+    strictPort: true
   },
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@pages': path.resolve(__dirname, './src/pages'),
-      '@assets': path.resolve(__dirname, './src/assets'),
-      '@styles': path.resolve(__dirname, './src/styles'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@contexts': path.resolve(__dirname, './src/contexts'),
-      '@types': path.resolve(__dirname, './src/types')
+  // Configuração para lidar com rotas no cliente
+  build: {
+    rollupOptions: {
+      input: 'index.html',
+      output: {
+        manualChunks: undefined,
+      },
     },
   },
+  resolve: {
+    alias: [
+      { find: '@', replacement: path.resolve(__dirname, 'src') },
+      { find: '@components', replacement: path.resolve(__dirname, 'src/components') },
+      { find: '@pages', replacement: path.resolve(__dirname, 'src/pages') },
+      { find: '@assets', replacement: path.resolve(__dirname, 'src/assets') },
+      { find: '@hooks', replacement: path.resolve(__dirname, 'src/hooks') },
+      { find: '@utils', replacement: path.resolve(__dirname, 'src/utils') },
+      { find: '@types', replacement: path.resolve(__dirname, 'src/types') },
+      { find: '@mocks', replacement: path.resolve(__dirname, 'src/mocks') },
+      { find: '@features', replacement: path.resolve(__dirname, 'src/features') }
+    ]
+  },
+  define: {
+    'process.env': {}
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: 'globalThis'
+      }
+    }
+  }
 });

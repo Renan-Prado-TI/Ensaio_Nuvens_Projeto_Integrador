@@ -16,9 +16,9 @@ const dadosIniciais: Banda[] = [
       { id: '2', nome: 'Música 2', artista: 'Banda 1', duracao: '4:20' },
     ],
     instrumentos: [
-      { id: '1', nome: 'Guitarra' },
-      { id: '2', nome: 'Bateria' },
-      { id: '3', nome: 'Baixo' },
+      { id: '1', nome: 'Guitarra', quantidade: 2 },
+      { id: '2', nome: 'Bateria', quantidade: 1 },
+      { id: '3', nome: 'Baixo', quantidade: 1 },
     ],
     endereco: {
       cep: "01234-567",
@@ -51,9 +51,9 @@ const dadosIniciais: Banda[] = [
       { id: '3', nome: 'Jazz Standard 1', artista: 'Banda 2', duracao: '5:30' },
     ],
     instrumentos: [
-      { id: '4', nome: 'Saxofone' },
-      { id: '5', nome: 'Piano' },
-      { id: '6', nome: 'Contrabaixo' },
+      { id: '4', nome: 'Saxofone', quantidade: 1 },
+      { id: '5', nome: 'Piano', quantidade: 1 },
+      { id: '6', nome: 'Contrabaixo', quantidade: 1 },
     ],
     endereco: {
       cep: "04567-890",
@@ -86,8 +86,8 @@ const dadosIniciais: Banda[] = [
       { id: '5', nome: 'Viola e Coração', artista: 'Banda 3', duracao: '4:10' },
     ],
     instrumentos: [
-      { id: '7', nome: 'Viola Caipira' },
-      { id: '8', nome: 'Violão' },
+      { id: '7', nome: 'Viola Caipira', quantidade: 1 },
+      { id: '8', nome: 'Violão', quantidade: 1 },
     ],
     endereco: {
       cep: "06789-012",
@@ -105,15 +105,52 @@ const dadosIniciais: Banda[] = [
       youtube: "sertanejoraiz",
     },
     dataCriacao: new Date().toISOString(),
-    dataAtualizacao: new Date().toISOString()
+  dataAtualizacao: new Date().toISOString()
   }
 ];
 
-// Inicializa o array de bandas com os dados iniciais
-let bandas: Banda[] = [...dadosIniciais];
-console.log('Dados iniciais das bandas carregados com sucesso');
+// Inicializa o array de bandas
+let bandas: Banda[] = [];
 
-// Simula atraso de rede
+// Função para inicializar os dados
+const inicializarDados = () => {
+  // Verifica se já existem dados no localStorage
+  const dadosSalvos = localStorage.getItem('bandas');
+  
+  if (dadosSalvos) {
+    try {
+      const dados = JSON.parse(dadosSalvos);
+      console.log('Dados carregados do localStorage:', dados.length, 'bandas');
+      return dados;
+    } catch (error) {
+      console.error('Erro ao carregar dados do localStorage:', error);
+      // Se houver erro, usa os dados iniciais
+      console.log('Usando dados iniciais:', dadosIniciais.length, 'bandas');
+      return [...dadosIniciais];
+    }
+  } else {
+    // Se não houver dados salvos, usa os dados iniciais
+    console.log('Usando dados iniciais:', dadosIniciais.length, 'bandas');
+    return [...dadosIniciais];
+  }
+};
+
+// Inicializa os dados ao carregar o módulo
+bandas = inicializarDados();
+
+// Função para salvar os dados no localStorage
+export const salvarDados = () => {
+  try {
+    localStorage.setItem('bandas', JSON.stringify(bandas));
+    console.log('Dados salvos no localStorage');
+    return true;
+  } catch (error) {
+    console.error('Erro ao salvar dados no localStorage:', error);
+    return false;
+  }
+};
+
+// Simulando atraso de rede
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Buscar todas as bandas
@@ -137,24 +174,54 @@ export async function buscarBandas(): Promise<Banda[]> {
 }
 
 // Buscar banda por ID
-export async function buscarBandaPorId(id: number): Promise<Banda | undefined> {
+export async function buscarBandaPorId(id: number | string): Promise<Banda | undefined> {
   console.log('=== INÍCIO DA BUSCA POR ID ===');
-  console.log('ID solicitado:', id);
-  console.log('Tipo do ID:', typeof id);
+  console.log('ID solicitado:', id, '(tipo:', typeof id, ')');
+  
+  // Verifica se o ID é válido
+  if (id === undefined || id === null || id === '') {
+    console.error('ID inválido fornecido:', id);
+    return undefined;
+  }
 
   await delay(300);
 
-  console.log('Array de bandas atual:', bandas.length);
-  console.log('IDs disponíveis:', bandas.map(b => ({ id: b.id, tipo: typeof b.id })));
+  console.log('Total de bandas cadastradas:', bandas.length);
+  
+  // Log detalhado de todas as bandas para depuração
+  console.log('Detalhes das bandas disponíveis:');
+  bandas.forEach((b, i) => {
+    console.log(`[${i}] ID: ${b.id} (tipo: ${typeof b.id}), Nome: ${b.nome}`);
+  });
 
-  const banda = bandas.find(banda => banda.id === id.toString());
+  // Converte o ID para string para garantir a comparação correta
+  const idString = String(id);
+  console.log('Buscando banda com ID convertido para string:', idString);
+  
+  // Busca a banda com o ID correspondente
+  const banda = bandas.find(banda => String(banda.id) === idString);
 
   console.log('Banda encontrada:', banda ? 'Sim' : 'Não');
-  console.log('Banda retornada:', banda);
+  
+  if (banda) {
+    console.log('Detalhes da banda encontrada:', {
+      id: banda.id,
+      nome: banda.nome,
+      tipoId: typeof banda.id
+    });
+  } else {
+    console.warn(`Nenhuma banda encontrada com o ID: ${idString}`);
+    console.log('IDs disponíveis:', bandas.map(b => ({
+      id: b.id, 
+      tipo: typeof b.id,
+      nome: b.nome
+    })));
+  }
 
   console.log('=== FIM DA BUSCA POR ID ===');
 
-  return banda;
+  // Retorna uma cópia do objeto para evitar mutação acidental
+  return banda ? { ...banda } : undefined;
 }
 
 // Criar nova banda
@@ -182,6 +249,7 @@ export async function criarBanda(dados: CriarBandaDTO): Promise<Banda> {
       ...dados,
       id: novoId,
       musicas: [],
+      quantidadeMusicos: 0, // Garante que a quantidade de músicos seja inicializada como 0
       dataCriacao: new Date().toISOString(),
       dataAtualizacao: new Date().toISOString(),
       ativa: dados.ativa ?? true,
@@ -219,34 +287,104 @@ export async function criarBanda(dados: CriarBandaDTO): Promise<Banda> {
 
 // Atualizar banda
 export async function atualizarBanda(
-  id: number, 
+  id: number | string, 
   dados: AtualizarBandaDTO
-): Promise<Banda | undefined> {
-  await delay(600);
+): Promise<Banda> {
+  console.log('=== INÍCIO DA ATUALIZAÇÃO DE BANDA ===');
+  console.log('ID da banda a ser atualizada:', id, '(tipo:', typeof id, ')');
+  console.log('Dados recebidos para atualização:', dados);
   
-  const index = bandas.findIndex(b => b.id === id.toString());
-  if (index === -1) return undefined;
+  // Verifica se o ID é válido
+  if (id === undefined || id === null || id === '') {
+    const erro = 'ID inválido fornecido para atualização';
+    console.error(erro);
+    throw new Error(erro);
+  }
   
-  const bandaAtualizada = {
+  await delay(500);
+  
+  // Converte o ID para string para garantir a comparação correta
+  const idString = String(id);
+  console.log('Buscando banda com ID convertido para string:', idString);
+  
+  // Encontra o índice da banda
+  const index = bandas.findIndex(banda => String(banda.id) === idString);
+  
+  if (index === -1) {
+    const erro = `Nenhuma banda encontrada com o ID: ${idString}`;
+    console.error(erro);
+    console.log('IDs disponíveis:', bandas.map(b => ({
+      id: b.id, 
+      tipo: typeof b.id,
+      nome: b.nome
+    })));
+    throw new Error(erro);
+  }
+  
+  console.log('Banda encontrada para atualização:', {
+    id: bandas[index].id,
+    nome: bandas[index].nome,
+    index
+  });
+  
+  // Prepara os dados atualizados
+  const { redesSociais, ...outrosDados } = dados;
+  const novasRedesSociais = {
+    ...(bandas[index].redesSociais || {}),
+    ...(redesSociais || {})
+  };
+  
+  // Cria o objeto de banda atualizado
+  const bandaAtualizada: Banda = {
     ...bandas[index],
-    ...dados,
+    ...outrosDados,
+    // Garante que o ID não seja alterado
+    id: bandas[index].id,
+    // Atualiza as redes sociais
+    redesSociais: novasRedesSociais,
+    // Atualiza a data de atualização
     dataAtualizacao: new Date().toISOString()
   };
   
+  console.log('Banda após atualização:', bandaAtualizada);
+  
+  // Atualiza o array de bandas
   bandas[index] = bandaAtualizada;
+  
+  // Salva as alterações
+  const salvou = salvarDados();
+  if (!salvou) {
+    console.error('Falha ao salvar os dados no localStorage');
+    throw new Error('Erro ao salvar os dados da banda');
+  }
+
+  console.log('Banda atualizada com sucesso:', {
+    id: bandaAtualizada.id,
+    nome: bandaAtualizada.nome,
+    dataAtualizacao: bandaAtualizada.dataAtualizacao
+  });
+  
+  console.log('=== FIM DA ATUALIZAÇÃO DE BANDA ===');
+
+  // Retorna uma cópia do objeto para evitar mutação acidental
   return { ...bandaAtualizada };
 }
 
 // Deletar banda
-export async function deletarBanda(id: number): Promise<boolean> {
+export async function deletarBanda(id: number | string): Promise<boolean> {
   console.log(`=== INÍCIO DA EXCLUSÃO DA BANDA ID: ${id} ===`);
+  console.log('Tipo do ID fornecido:', typeof id);
   console.log('Total de bandas antes da exclusão:', bandas.length);
   console.log('IDs das bandas antes da exclusão:', bandas.map(b => b.id));
   
   await delay(400);
   
-  console.log(`Buscando banda com ID: ${id}...`);
-  const index = bandas.findIndex(b => b.id === id.toString());
+  // Converte o ID para string para garantir a comparação correta
+  const idString = id.toString();
+  console.log(`Buscando banda com ID: ${idString}...`);
+  console.log('IDs disponíveis:', bandas.map(b => ({ id: b.id, tipo: typeof b.id })));
+  
+  const index = bandas.findIndex(b => b.id === idString);
   
   if (index !== -1) {
     console.log(`Banda encontrada no índice ${index}, realizando exclusão...`);
@@ -254,10 +392,12 @@ export async function deletarBanda(id: number): Promise<boolean> {
     console.log('Banda excluída com sucesso!');
     console.log('Total de bandas após exclusão:', bandas.length);
     console.log('IDs das bandas após exclusão:', bandas.map(b => b.id));
+    console.log('=== FIM DA EXCLUSÃO DE BANDA ===');
     return true;
   }
   
-  console.error(`Erro: Banda com ID ${id} não encontrada`);
+  console.error(`Erro: Banda com ID ${idString} não encontrada`);
+  console.log('=== FIM DA EXCLUSÃO DE BANDA (FALHA) ===');
   return false;
 }
 

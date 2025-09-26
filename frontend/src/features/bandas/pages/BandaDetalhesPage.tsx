@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useBandaDetalhes } from '../hooks/useBandaDetalhes';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import Button from '@/components/ui/button';
 import { Notification } from '@/components/ui/notification';
 import { ConfirmationModal } from '@/components/ui/confirmation-modal';
@@ -14,18 +14,13 @@ import {
   Calendar,
   Users,
   Music,
-  ExternalLink,
   Edit,
   Trash2,
-  Facebook,
-  Instagram,
-  Youtube,
-  Linkedin,
-  Globe,
-  Building2,
+  XCircle,
+  User as UserX,
   Eye,
-  User,
-  Music as MusicIcon
+  User as UserIcon,
+  Building2
 } from 'lucide-react';
 
 export function BandaDetalhesPage() {
@@ -94,15 +89,15 @@ export function BandaDetalhesPage() {
       });
     } finally {
       setIsDeleting(false);
-      handleCloseDeleteModal();
     }
   };
 
   if (loading) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando informações da banda...</p>
         </div>
       </div>
     );
@@ -110,10 +105,16 @@ export function BandaDetalhesPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-          <p>Erro ao carregar os dados da banda: {error.message}</p>
-          <p>ID: {id}</p>
+      <div className="bg-red-50 border-l-4 border-red-400 p-4">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <XCircle className="h-5 w-5 text-red-400" />
+          </div>
+          <div className="ml-3">
+            <p className="text-sm text-red-700">
+              Erro ao carregar os dados da banda: {error.message}
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -121,85 +122,113 @@ export function BandaDetalhesPage() {
 
   if (!banda) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded">
-          <p>Banda não encontrada</p>
-          <p>ID: {id}</p>
+      <div className="text-center py-12">
+        <UserX className="h-12 w-12 mx-auto text-gray-400" />
+        <h3 className="mt-2 text-lg font-medium text-gray-900">Banda não encontrada</h3>
+        <p className="mt-1 text-gray-500">A banda que você está procurando não existe ou foi removida.</p>
+        <div className="mt-6">
+          <Button onClick={() => navigate('/bandas')}>
+            Voltar para a lista de bandas
+          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-6 space-y-6">
-      {/* Header da Banda */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Avatar/Foto da Banda */}
-            <div className="flex-shrink-0">
-              <Avatar className="h-24 w-24 md:h-32 md:w-32">
-                <AvatarImage src={banda.foto} alt={banda.nome} />
-                <AvatarFallback className="text-2xl font-bold bg-primary-100 text-primary-600">
-                  {banda.nome.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
+    <div className="container mx-auto p-6">
+      {/* Botão Voltar */}
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center text-gray-600 hover:text-blue-600 mb-4 transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+        </svg>
+        Voltar
+      </button>
+
+      {/* Cabeçalho com imagem de capa e avatar */}
+      <div className="relative mb-8 rounded-xl overflow-hidden bg-gradient-to-r from-blue-600 to-indigo-700 shadow-lg">
+        {/* Imagem de capa */}
+        <div className="h-48 bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center">
+          <Music className="h-24 w-24 text-white opacity-20" />
+        </div>
+        
+        {/* Conteúdo do cabeçalho */}
+        <div className="relative px-6 pb-6 -mt-12">
+          <div className="flex flex-col md:flex-row items-start md:items-end gap-6">
+            {/* Avatar da banda */}
+            <div className="relative">
+              <div className="h-24 w-24 md:h-32 md:w-32 rounded-xl bg-white p-1 shadow-lg">
+                <div className="h-full w-full rounded-lg bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
+                  <span className="text-4xl font-bold text-blue-600">{banda?.nome?.charAt(0) || 'B'}</span>
+                </div>
+              </div>
+              <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-1 shadow-md">
+                <div className="h-6 w-6 rounded-full bg-green-500 flex items-center justify-center">
+                  <span className="text-xs text-white font-bold">✓</span>
+                </div>
+              </div>
             </div>
 
-            {/* Informações Principais */}
-            <div className="flex-1 space-y-4">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl font-bold text-gray-900">{banda.nome}</h1>
+            {/* Informações da banda */}
+            <div className="flex-1 text-white">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold">{banda?.nome}</h1>
+                  {banda?.nomeArtistico && (
+                    <p className="text-blue-100 text-lg">{banda.nomeArtistico}</p>
+                  )}
                 </div>
-                {banda.nomeArtistico && (
-                  <p className="text-xl text-gray-600 font-medium">{banda.nomeArtistico}</p>
-                )}
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-white/90 hover:bg-white text-blue-700 hover:text-blue-800 border-white/30 hover:border-white/50 transition-all duration-200 flex items-center gap-2 px-4 py-2 rounded-lg shadow-md"
+                    onClick={() => navigate(`/gestor/bandas/${id}/editar`)}
+                  >
+                    <Edit className="h-4 w-4" />
+                    <span>Editar</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-red-600 hover:bg-red-700 text-white hover:text-white border-red-600 hover:border-red-700 transition-all duration-200 flex items-center gap-2 px-4 py-2 rounded-lg shadow-md"
+                    onClick={handleOpenDeleteModal}
+                    disabled={isDeleting}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span>{isDeleting ? 'Excluindo...' : 'Excluir'}</span>
+                  </Button>
+                </div>
               </div>
 
-              <p className="text-gray-700 leading-relaxed">{banda.descricao}</p>
-
-              <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-1">
+              {/* Metadados da banda */}
+              <div className="mt-4 flex flex-wrap gap-4 text-sm text-blue-100">
+                <div className="flex items-center gap-1.5">
                   <Calendar className="h-4 w-4" />
-                  <span>Fundada em {new Date(banda.fundacao).toLocaleDateString('pt-BR')}</span>
+                  <span>Fundada em {new Date(banda?.fundacao || new Date()).toLocaleDateString('pt-BR')}</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
                   <Users className="h-4 w-4" />
-                  <span>{banda.quantidadeMusicos} músicos</span>
+                  <span>Total de {banda?.quantidadeMusicos || 0} músicos cadastrados</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
                   <Music className="h-4 w-4" />
-                  <span>{banda.musicas.length} músicas no repertório</span>
+                  <span>{banda?.musicas?.length || 0} músicas no repertório</span>
                 </div>
               </div>
-            </div>
-
-            {/* Ações */}
-            <div className="flex flex-col gap-2 md:items-end">
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full md:w-auto"
-                onClick={() => navigate(`/gestor/bandas/${id}/editar`)}
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Editar
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full md:w-auto text-red-600 hover:text-red-700"
-                onClick={handleOpenDeleteModal}
-                disabled={isDeleting}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                {isDeleting ? 'Excluindo...' : 'Excluir'}
-              </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      {/* Descrição da banda */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-800 mb-3">Sobre a banda</h2>
+        <p className="text-gray-700 leading-relaxed">{banda?.descricao || 'Nenhuma descrição fornecida.'}</p>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Informações de Contato */}
@@ -290,113 +319,6 @@ export function BandaDetalhesPage() {
         </CardContent>
       </Card>
 
-      {/* Redes Sociais */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Redes Sociais</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {banda.redesSociais.facebook && (
-              <a
-                href={banda.redesSociais.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
-              >
-                <Facebook className="h-5 w-5 text-blue-600" />
-                <div>
-                  <p className="font-medium">Facebook</p>
-                  <p className="text-sm text-gray-500">Ver página</p>
-                </div>
-                <ExternalLink className="h-4 w-4 text-gray-400 ml-auto" />
-              </a>
-            )}
-
-            {banda.redesSociais.instagram && (
-              <a
-                href={banda.redesSociais.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 bg-pink-50 hover:bg-pink-100 rounded-lg transition-colors"
-              >
-                <Instagram className="h-5 w-5 text-pink-600" />
-                <div>
-                  <p className="font-medium">Instagram</p>
-                  <p className="text-sm text-gray-500">Ver perfil</p>
-                </div>
-                <ExternalLink className="h-4 w-4 text-gray-400 ml-auto" />
-              </a>
-            )}
-
-            {banda.redesSociais.youtube && (
-              <a
-                href={banda.redesSociais.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
-              >
-                <Youtube className="h-5 w-5 text-red-600" />
-                <div>
-                  <p className="font-medium">YouTube</p>
-                  <p className="text-sm text-gray-500">Ver canal</p>
-                </div>
-                <ExternalLink className="h-4 w-4 text-gray-400 ml-auto" />
-              </a>
-            )}
-
-            {banda.redesSociais.linkedin && (
-              <a
-                href={banda.redesSociais.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
-              >
-                <Linkedin className="h-5 w-5 text-blue-600" />
-                <div>
-                  <p className="font-medium">LinkedIn</p>
-                  <p className="text-sm text-gray-500">Ver perfil</p>
-                </div>
-                <ExternalLink className="h-4 w-4 text-gray-400 ml-auto" />
-              </a>
-            )}
-
-            {banda.redesSociais.tiktok && (
-              <a
-                href={banda.redesSociais.tiktok}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <div className="h-5 w-5 bg-black rounded-sm flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">♪</span>
-                </div>
-                <div>
-                  <p className="font-medium">TikTok</p>
-                  <p className="text-sm text-gray-500">Ver perfil</p>
-                </div>
-                <ExternalLink className="h-4 w-4 text-gray-400 ml-auto" />
-              </a>
-            )}
-
-            {banda.redesSociais.site && (
-              <a
-                href={banda.redesSociais.site}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <Globe className="h-5 w-5 text-gray-600" />
-                <div>
-                  <p className="font-medium">Website</p>
-                  <p className="text-sm text-gray-500">Visitar site</p>
-                </div>
-                <ExternalLink className="h-4 w-4 text-gray-400 ml-auto" />
-              </a>
-            )}
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Sistema de Abas Customizado */}
       <div className="w-full">
@@ -411,8 +333,8 @@ export function BandaDetalhesPage() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <User className="h-4 w-4" />
-              <span>Músicos ({banda.quantidadeMusicos})</span>
+              <UserIcon className="h-4 w-4" />
+              <span>Músicos ({banda?.quantidadeMusicos || 0})</span>
             </button>
             <button
               onClick={() => setAbaAtiva('musicas')}
@@ -422,8 +344,8 @@ export function BandaDetalhesPage() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
             >
-              <MusicIcon className="h-4 w-4" />
-              <span>Músicas ({banda.musicas.length})</span>
+              <Music className="h-4 w-4" />
+              <span>Músicas ({banda?.musicas?.length || 0})</span>
             </button>
           </nav>
         </div>
@@ -444,30 +366,35 @@ export function BandaDetalhesPage() {
               {banda.quantidadeMusicos > 0 ? (
                 <div className="space-y-3">
                   {/* Mock de músicos - em uma implementação real, isso viria da API */}
-                  {[
-                    { nome: "João Silva", instrumento: "Guitarra" },
-                    { nome: "Maria Santos", instrumento: "Vocal" },
-                    { nome: "Carlos Oliveira", instrumento: "Bateria" },
-                    { nome: "Ana Costa", instrumento: "Baixo" }
-                  ].slice(0, banda.quantidadeMusicos).map((musico, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback className="text-xs">
-                            {musico.nome.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">{musico.nome}</p>
-                          <p className="text-sm text-gray-500">{musico.instrumento}</p>
+                  {Array.from({ length: banda.quantidadeMusicos }).map((_, index) => {
+                    // Em uma implementação real, esses dados viriam da API
+                    const musicosMock = [
+                      { nome: "João Silva", instrumento: "Guitarra" },
+                      { nome: "Maria Santos", instrumento: "Vocal" },
+                      { nome: "Carlos Oliveira", instrumento: "Bateria" },
+                      { nome: "Ana Costa", instrumento: "Baixo" }
+                    ];
+                    const musico = musicosMock[index % musicosMock.length];
+                    return (
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback className="text-xs">
+                              {musico.nome.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">{musico.nome}</p>
+                            <p className="text-sm text-gray-500">{musico.instrumento}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-8 text-gray-500">
-                  <User className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                  <UserIcon className="h-12 w-12 mx-auto mb-3 text-gray-300" />
                   <p>Nenhum músico cadastrado</p>
                 </div>
               )}
@@ -494,11 +421,13 @@ export function BandaDetalhesPage() {
                     <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-3">
                         <div className="h-8 w-8 bg-primary-100 rounded-full flex items-center justify-center">
-                          <MusicIcon className="h-4 w-4 text-primary-600" />
+                          <Music className="h-4 w-4 text-primary-600" />
                         </div>
                         <div>
                           <p className="font-medium">{musica.nome}</p>
-                          <p className="text-sm text-gray-500">{musica.artista}</p>
+                          {banda?.redesSociais?.instagram && (
+                            <p className="text-sm text-gray-500">@{banda.redesSociais.instagram.replace('@', '')}</p>
+                          )}
                         </div>
                       </div>
                       {musica.duracao && (
@@ -511,7 +440,7 @@ export function BandaDetalhesPage() {
                 </div>
               ) : (
                 <div className="text-center py-8 text-gray-500">
-                  <MusicIcon className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                  <Music className="h-12 w-12 mx-auto mb-3 text-gray-300" />
                   <p>Nenhuma música cadastrada no repertório</p>
                 </div>
               )}
@@ -522,15 +451,17 @@ export function BandaDetalhesPage() {
 
       {/* Notificação */}
       {notification && (
-        <Notification
-          message={notification.message}
-          type={notification.type}
-          onClose={() => setNotification(null)}
-          duration={5000}
-        />
+        <div className="fixed bottom-4 right-4 z-50">
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            onClose={() => setNotification(null)}
+            duration={5000}
+          />
+        </div>
       )}
 
-      {/* Modal de Confirmação de Exclusão */}
+      {/* Modal de confirmação de exclusão */}
       <ConfirmationModal
         isOpen={showDeleteModal}
         title="Confirmar exclusão"

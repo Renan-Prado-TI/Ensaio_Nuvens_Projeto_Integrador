@@ -1,5 +1,28 @@
 // Declarações de tipos globais para o projeto
 
+// Importações necessárias para o React
+declare namespace React {
+  interface HTMLAttributes<T> extends AriaAttributes, DOMAttributes<T> {
+    // Adiciona propriedades personalizadas que podem ser usadas em elementos HTML
+    className?: string;
+    style?: React.CSSProperties;
+  }
+}
+
+declare namespace JSX {
+  interface IntrinsicElements {
+    // Adiciona elementos HTML comuns
+    [elemName: string]: any;
+    
+    // Adiciona elementos específicos do Framer Motion
+    motion: any;
+    'motion.div': any;
+    'motion.span': any;
+    'motion.button': any;
+    'motion.a': any;
+  }
+}
+
 // Permite importação de módulos CSS/SCSS
 declare module '*.module.css' {
   const classes: { [key: string]: string };

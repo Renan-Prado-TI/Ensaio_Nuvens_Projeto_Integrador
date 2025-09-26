@@ -1,5 +1,8 @@
 /* ESTILOS GLOBAIS - APENAS FONTES, PALETA E CONFIGURAÇÕES ESSENCIAIS */
 
+/* Importar fontes */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 /* Importa o Tailwind CSS */
 @tailwind base;
 @tailwind components;
@@ -14,9 +17,6 @@ html, body, #root {
   width: 100%;
   scroll-behavior: smooth;
 }
-
-/* Importar fontes */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* Configurar fonte global */
 * {
@@ -198,100 +198,131 @@ html, body, #root {
     border-bottom: 1px solid rgb(var(--color-border));
     z-index: var(--z-header);
     height: 4rem;
-    width: calc(100vw - var(--spacing-sidebar));
-    margin: 0;
-    padding-left: 0;
-    padding-right: 0;
-    transition: left var(--transition-normal), width var(--transition-normal);
-    box-sizing: border-box;
   }
+}
 
+/* Animações globais */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Animações personalizadas para a página inicial */
+@keyframes float {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg) scale(0.5);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(100vh) translateX(50px) rotate(180deg) scale(1.2);
+    opacity: 0;
+  }
+}
+
+@keyframes grow {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+/* Layout principal */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: calc(100vw - var(--spacing-sidebar));
+  height: auto;
+  padding-top: 4rem;
+  overflow: visible;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+  box-sizing: border-box;
+  transition: width var(--transition-normal);
+}
+
+.page-content {
+  flex: 1;
+  overflow: visible;
+  min-height: calc(100vh - 4rem);
+  width: 100%;
+  height: auto;
+  padding: 1rem;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+  box-sizing: border-box;
+}
+
+.footer {
+  background-color: rgb(var(--color-background-light));
+  border-top: 1px solid rgb(var(--color-border));
+  padding: 2rem 0;
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Responsividade */
+@media (max-width: 1023px) {
   .main-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    width: calc(100vw - var(--spacing-sidebar));
-    height: auto;
-    padding-top: 4rem;
+    width: 100vw;
+  }
+
+  .sidebar-desktop {
+    display: none;
+  }
+
+  .layout-container {
+    padding-left: 0;
     overflow: visible;
-    margin: 0;
-    padding-left: 0;
-    padding-right: 0;
-    box-sizing: border-box;
-    transition: width var(--transition-normal);
   }
 
-  .page-content {
-    flex: 1;
-    overflow: visible;
-    min-height: calc(100vh - 4rem);
-    width: 100%;
-    height: auto;
-    padding: 1rem;
-    margin: 0;
-    padding-left: 0;
-    padding-right: 0;
-    box-sizing: border-box;
+  .header {
+    left: 0;
+    width: 100vw;
   }
+}
 
-  .footer {
-    background-color: rgb(var(--color-background-light));
-    border-top: 1px solid rgb(var(--color-border));
-    padding: 2rem 0;
-    margin-top: auto;
-    width: 100%;
-    margin: 0;
-    padding-left: 0;
-    padding-right: 0;
-    box-sizing: border-box;
-  }
+/* Layout container com sidebar expandido */
+.layout-container:has(.sidebar-desktop.expanded) {
+  padding-left: var(--spacing-sidebar-expanded);
+}
 
-  /* Responsividade */
-  @media (max-width: 1023px) {
-    .main-content {
-      width: 100vw;
-    }
+.layout-container:has(.sidebar-desktop.expanded) .header {
+  left: var(--spacing-sidebar-expanded);
+  width: calc(100vw - var(--spacing-sidebar-expanded));
+}
 
-    .sidebar-desktop {
-      display: none;
-    }
+.layout-container:has(.sidebar-desktop.expanded) .main-content {
+  width: calc(100vw - var(--spacing-sidebar-expanded));
+}
 
-    .layout-container {
-      padding-left: 0;
-      overflow: visible;
-    }
+.layout-container:has(.sidebar-desktop:hover) {
+  padding-left: var(--spacing-sidebar-expanded);
+}
 
-    .header {
-      left: 0;
-      width: 100vw;
-    }
-  }
+.layout-container:has(.sidebar-desktop:hover) .header {
+  left: var(--spacing-sidebar-expanded);
+  width: calc(100vw - var(--spacing-sidebar-expanded));
+}
 
-  /* Layout container com sidebar expandido */
-  .layout-container:has(.sidebar-desktop.expanded) {
-    padding-left: var(--spacing-sidebar-expanded);
-  }
-
-  .layout-container:has(.sidebar-desktop.expanded) .header {
-    left: var(--spacing-sidebar-expanded);
-    width: calc(100vw - var(--spacing-sidebar-expanded));
-  }
-
-  .layout-container:has(.sidebar-desktop.expanded) .main-content {
-    width: calc(100vw - var(--spacing-sidebar-expanded));
-  }
-
-  .layout-container:has(.sidebar-desktop:hover) {
-    padding-left: var(--spacing-sidebar-expanded);
-  }
-
-  .layout-container:has(.sidebar-desktop:hover) .header {
-    left: var(--spacing-sidebar-expanded);
-    width: calc(100vw - var(--spacing-sidebar-expanded));
-  }
-
-  .layout-container:has(.sidebar-desktop:hover) .main-content {
-    width: calc(100vw - var(--spacing-sidebar-expanded));
-  }
+.layout-container:has(.sidebar-desktop:hover) .main-content {
+  width: calc(100vw - var(--spacing-sidebar-expanded));
 }

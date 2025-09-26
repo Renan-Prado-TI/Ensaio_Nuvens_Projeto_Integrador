@@ -20,6 +20,7 @@ export interface EnderecoBanda {
 export interface InstrumentoBanda {
   id: string;
   nome: string;
+  quantidade: number;
 }
 
 export interface MusicaBanda {

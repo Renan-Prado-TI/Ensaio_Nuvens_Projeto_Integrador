@@ -5,9 +5,7 @@ import { Check, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const Select = SelectPrimitive.Root
-
 const SelectGroup = SelectPrimitive.Group
-
 const SelectValue = SelectPrimitive.Value
 
 const SelectTrigger = React.forwardRef<
@@ -82,7 +80,7 @@ const SelectContent = React.forwardRef<
       {...props}
     >
       <SelectScrollUpButton />
-      <SelectPrimitive.ViewPort
+      <SelectPrimitive.Viewport
         className={cn(
           "p-1",
           position === "popper" &&
@@ -90,7 +88,7 @@ const SelectContent = React.forwardRef<
         )}
       >
         {children}
-      </SelectPrimitive.ViewPort>
+      </SelectPrimitive.Viewport>
       <SelectScrollDownButton />
     </SelectPrimitive.Content>
   </SelectPrimitive.Portal>

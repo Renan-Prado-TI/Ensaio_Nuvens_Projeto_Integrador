@@ -6,8 +6,7 @@ import {
   CloudArrowUpIcon,
   DocumentTextIcon,
   UserCircleIcon,
-  CheckCircleIcon,
-  StarIcon
+  CheckCircleIcon
 } from '@heroicons/react/24/outline';
 
 const EnsaioNuvensHome = () => {
@@ -25,7 +24,7 @@ const EnsaioNuvensHome = () => {
         }}>
         {/* Brilho sutil */}
         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent"></div>
-        {/* Destaque central */}
+        {/*Destaque central */}
         <div className="absolute inset-0 bg-radial-gradient(circle at 50% 50%, rgba(106,13,173,0.3), transparent 70%)"></div>
         <div className="w-full h-full flex items-center justify-center">
           <div className="container mx-auto px-4">
@@ -59,148 +58,74 @@ const EnsaioNuvensHome = () => {
           </div>
         </div>
       </div>
-
-      {/* Seção de Teste com Imagem */}
-      <div className="relative py-16 bg-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-2 lg:gap-8 items-center">
-            <div className="mb-10 lg:mb-0">
-              <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                <span className="block">Experimente Agora</span>
-                <span className="block text-purple-700">Veja como é fácil começar</span>
-              </h2>
-              <p className="mt-4 text-lg text-gray-600">
-                Nossa plataforma foi projetada para simplificar a gestão musical. 
-                Experimente gratuitamente e descubra como podemos ajudar você e sua banda.
-              </p>
-              <div className="mt-8">
-                <Link
-                  to="/cadastro"
-                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  Testar Grátis
-                  <ArrowRightIcon className="ml-2 -mr-1 h-5 w-5" />
-                </Link>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="relative rounded-xl overflow-hidden shadow-2xl">
-                <img
-                  className="w-full h-auto"
-                  src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80"
-                  alt="Demonstração da plataforma"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Purpose Section */}
-      <div className="py-16 bg-white">
+      
+      {/* Seção de Recursos */}
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <span className="inline-block px-3 py-1 text-sm font-semibold text-purple-700 bg-purple-100 rounded-full mb-4">
-              Nosso Propósito
+              Recursos
             </span>
             <h2 className="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-              <span className="block">Modernizando a gestão</span>
-              <span className="block text-purple-700">musical</span>
-            </h2>
-            <p className="mt-6 max-w-3xl mx-auto text-xl text-gray-500">
-              O projeto Ensaio nas Nuvens tem como principal objetivo modernizar a forma como maestros e gestores organizam os ensaios de suas corporações musicais.
-            </p>
-          </div>
-          
-          <div className="mt-16 grid gap-10 md:grid-cols-3">
-            <div className="p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-              <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
-                <CloudArrowUpIcon className="h-8 w-8 text-purple-700" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Distribuição Simplificada</h3>
-              <p className="mt-2 text-base text-gray-500">
-                Envie partituras para todos os músicos da sua banda ou orquestra com apenas alguns cliques.
-              </p>
-            </div>
-            
-            <div className="p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-              <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
-                <DocumentTextIcon className="h-8 w-8 text-purple-700" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Banco de Partituras</h3>
-              <p className="mt-2 text-base text-gray-500">
-                Acesso a um acervo digital de partituras que pode ser acessado de qualquer lugar, a qualquer momento.
-              </p>
-            </div>
-            
-            <div className="p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100">
-              <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
-                <UserGroupIcon className="h-8 w-8 text-purple-700" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Comunicação Eficiente</h3>
-              <p className="mt-2 text-base text-gray-500">
-                Mantenha todos os músicos alinhados com atualizações em tempo real e comunicação centralizada.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Benefits Section */}
-      <div className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-              <span className="block">Para quem é</span>
-              <span className="block text-purple-700">o Ensaio nas Nuvens?</span>
+              <span className="block">Tudo que você precisa</span>
+              <span className="block text-purple-700">em um só lugar</span>
             </h2>
             <p className="mt-6 max-w-2xl mx-auto text-xl text-gray-500">
-              Uma solução completa para diferentes necessidades no mundo musical.
+              Uma plataforma completa para gerenciar todas as necessidades do seu grupo musical.
             </p>
           </div>
-          
-          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+
+          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {[
               {
-                title: 'Gestores',
-                description: 'Que têm dificuldades na distribuição e atualização de partituras',
-                icon: UserCircleIcon,
-                color: 'bg-purple-100 text-purple-700'
+                icon: <DocumentTextIcon className="h-8 w-8 text-purple-600" />,
+                title: 'Partituras Digitais',
+                description: 'Armazene e compartilhe partituras com sua banda de forma segura e organizada.'
               },
               {
-                title: 'Grupos Musicais',
-                description: 'Que ainda utilizam métodos tradicionais baseados em papel',
-                icon: UserGroupIcon,
-                color: 'bg-blue-100 text-blue-700'
+                icon: <UserGroupIcon className="h-8 w-8 text-purple-600" />,
+                title: 'Gestão de Membros',
+                description: 'Mantenha o controle dos integrantes da sua banda e suas respectivas funções.'
               },
               {
-                title: 'Instituições',
-                description: 'De ensino musical que desejam otimizar a gestão de ensaios',
-                icon: MusicalNoteIcon,
-                color: 'bg-indigo-100 text-indigo-700'
+                icon: <MusicalNoteIcon className="h-8 w-8 text-purple-600" />,
+                title: 'Repositório Musical',
+                description: 'Acesse todo o repertório da sua banda em qualquer lugar, a qualquer momento.'
               },
               {
-                title: 'Músicos',
-                description: 'Que desejam ter acesso fácil às suas partituras e materiais de estudo',
-                icon: StarIcon,
-                color: 'bg-pink-100 text-pink-700'
+                icon: <CloudArrowUpIcon className="h-8 w-8 text-purple-600" />,
+                title: 'Upload em Lote',
+                description: 'Faça upload de várias partituras de uma vez e economize tempo.'
+              },
+              {
+                icon: <UserCircleIcon className="h-8 w-8 text-purple-600" />,
+                title: 'Perfis Personalizados',
+                description: 'Cada músico tem seu próprio perfil com acesso personalizado.'
+              },
+              {
+                icon: <CheckCircleIcon className="h-8 w-8 text-purple-600" />,
+                title: 'Controle de Versões',
+                description: 'Acompanhe as alterações nas partituras e mantenha o histórico de versões.'
               }
-            ].map((item, index) => (
-              <div key={index} className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
-                <div className={`w-12 h-12 ${item.color} rounded-lg flex items-center justify-center mb-4`}>
-                  <item.icon className="h-6 w-6" />
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              >
+                <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center mb-4">
+                  {feature.icon}
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
-                <p className="text-gray-600">{item.description}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
-      </div>
-      
-      {/* Testimonials Section */}
-      <div className="py-16 bg-white">
+      </section>
+
+      {/* Seção de CTA */}
+      {/* Seção de Depoimentos */}
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <span className="inline-block px-3 py-1 text-sm font-semibold text-purple-700 bg-purple-100 rounded-full mb-4">
@@ -236,7 +161,9 @@ const EnsaioNuvensHome = () => {
               <div key={index} className="bg-gray-50 p-8 rounded-xl">
                 <div className="flex items-center mb-4">
                   {[...Array(5)].map((_, i) => (
-                    <StarIcon key={i} className={`h-5 w-5 ${i < testimonial.stars ? 'text-yellow-400' : 'text-gray-300'}`} />
+                    <div key={i} className="text-yellow-400">
+                      ★
+                    </div>
                   ))}
                 </div>
                 <p className="text-lg text-gray-600 italic mb-6">"{testimonial.quote}"</p>
@@ -253,10 +180,10 @@ const EnsaioNuvensHome = () => {
             ))}
           </div>
         </div>
-      </div>
+      </section>
       
-      {/* Pricing Section */}
-      <div className="py-16 bg-gray-50">
+      {/* Seção de Preços */}
+      <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h2 className="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
@@ -269,7 +196,7 @@ const EnsaioNuvensHome = () => {
           </div>
           
           <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {/* Free Plan */}
+            {/* Plano Grátis */}
             <div className="bg-white p-8 rounded-xl shadow-md border-2 border-purple-100 transform hover:scale-105 transition-transform">
               <h3 className="text-2xl font-bold text-gray-900">Músico</h3>
               <p className="mt-4 text-gray-600">Perfeito para músicos individuais</p>
@@ -294,12 +221,15 @@ const EnsaioNuvensHome = () => {
                 </li>
               </ul>
               
-              <button className="mt-8 w-full bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors">
+              <Link
+                to="/cadastro"
+                className="mt-8 block w-full text-center bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors"
+              >
                 Começar agora
-              </button>
+              </Link>
             </div>
             
-            {/* Gestor Básico */}
+            {/* Plano Básico */}
             <div className="bg-white p-8 rounded-xl shadow-lg border-2 border-purple-500 transform hover:scale-105 transition-transform">
               <div className="flex justify-between items-start">
                 <div>
@@ -333,12 +263,15 @@ const EnsaioNuvensHome = () => {
                 </li>
               </ul>
               
-              <button className="mt-8 w-full bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors">
+              <Link
+                to="/cadastro?plano=basico"
+                className="mt-8 block w-full text-center bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors"
+              >
                 Assinar agora
-              </button>
+              </Link>
             </div>
             
-            {/* Gestor Avançado */}
+            {/* Plano Completo */}
             <div className="bg-white p-8 rounded-xl shadow-md border-2 border-purple-100 transform hover:scale-105 transition-transform">
               <h3 className="text-2xl font-bold text-gray-900">Gestor Completo</h3>
               <p className="mt-1 text-gray-600">Para grandes grupos e orquestras</p>
@@ -368,43 +301,164 @@ const EnsaioNuvensHome = () => {
                 </li>
               </ul>
               
-              <button className="mt-8 w-full bg-purple-100 text-purple-700 py-3 px-6 rounded-lg hover:bg-purple-200 transition-colors">
+              <Link
+                to="/contato"
+                className="mt-8 block w-full text-center bg-purple-100 text-purple-700 py-3 px-6 rounded-lg hover:bg-purple-200 transition-colors"
+              >
                 Falar com vendas
-              </button>
+              </Link>
             </div>
           </div>
         </div>
-      </div>
+      </section>
       
-      {/* Final CTA Section */}
-      <div className="relative bg-gradient-to-r from-purple-900 to-black overflow-hidden">
+      {/* CTA Final */}
+      <section className="relative bg-gradient-to-r from-purple-900 to-black overflow-hidden py-24">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center opacity-10"></div>
-        <div className="relative max-w-5xl mx-auto py-24 px-4 sm:px-6 lg:px-8 text-center">
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
             <span className="block">Pronto para transformar</span>
             <span className="block text-purple-300">sua gestão musical?</span>
           </h2>
-          <p className="mt-6 max-w-2xl mx-auto text-xl text-purple-100">
-            Junte-se a bandas e orquestras que já estão revolucionando a forma como gerenciam seus ensaios e partituras.
+          <p className="mt-6 text-xl text-purple-100 max-w-3xl mx-auto">
+            Junte-se a centenas de músicos que já estão otimizando seus ensaios e apresentações com nossa plataforma.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
             <Link
               to="/cadastro"
-              className="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-purple-900 bg-white hover:bg-gray-100 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
+              className="flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-lg text-purple-900 bg-white hover:bg-gray-100 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
             >
               Comece agora gratuitamente
               <ArrowRightIcon className="ml-2 h-5 w-5" />
             </Link>
             <Link
               to="/planos"
-              className="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
+              className="flex items-center justify-center px-8 py-4 border border-transparent text-base font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 md:py-4 md:text-lg md:px-10 transition-colors duration-200"
             >
               Ver planos completos
               <ArrowRightIcon className="ml-2 h-5 w-5" />
             </Link>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Seção de Estatísticas */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+              <span className="block">Nossos Números</span>
+              <span className="block text-purple-700">Impacto Real</span>
+            </h2>
+          </div>
+          
+          <div className="mt-16 grid grid-cols-2 gap-8 md:grid-cols-4">
+            {[
+              { number: '500+', label: 'Músicos Atendidos' },
+              { number: '85%', label: 'Aumento na Produtividade' },
+              { number: '10k+', label: 'Partituras Distribuídas' },
+              { number: '4.9', label: 'Avaliação Média (5.0)' }
+            ].map((stat, index) => (
+              <div key={index} className="text-center p-6 bg-gray-50 rounded-xl">
+                <p className="text-4xl font-bold text-purple-700">{stat.number}</p>
+                <p className="mt-2 text-gray-600">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Seção de FAQ */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-4xl font-extrabold text-gray-900 sm:text-5xl">
+              Perguntas Frequentes
+            </h2>
+            <p className="mt-4 text-xl text-gray-600">
+              Encontre respostas para as dúvidas mais comuns sobre nossa plataforma.
+            </p>
+          </div>
+
+          <div className="mt-12 space-y-6">
+            {[
+              {
+                question: "Como faço para começar a usar a plataforma?",
+                answer: "Basta criar uma conta gratuita, fazer login e você terá acesso imediato aos recursos básicos. Para recursos avançados, você pode fazer upgrade a qualquer momento."
+              },
+              {
+                question: "Posso testar antes de assinar?",
+                answer: "Sim! Oferecemos um período de teste gratuito de 14 dias para todos os planos pagos, sem necessidade de cartão de crédito."
+              },
+              {
+                question: "Como funciona o cancelamento?",
+                answer: "Você pode cancelar sua assinatura a qualquer momento. Seu acesso continuará até o final do período já pago."
+              },
+              {
+                question: "Quais são os métodos de pagamento aceitos?",
+                answer: "Aceitamos todos os principais cartões de crédito, PIX e boleto bancário."
+              },
+              {
+                question: "Preciso instalar algum software?",
+                answer: "Não, nossa plataforma é 100% baseada na web e funciona diretamente no seu navegador. Não é necessário instalar nada."
+              }
+            ].map((faq, index) => (
+              <div key={index} className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                <h3 className="text-lg font-medium text-gray-900">{faq.question}</h3>
+                <p className="mt-2 text-gray-600">{faq.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Seção de Afiliados */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-r from-purple-900 to-purple-700 rounded-2xl p-8 md:p-12">
+            <div className="md:flex md:items-center md:justify-between">
+              <div className="md:w-2/3">
+                <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
+                  Seja um Afiliado
+                </h2>
+                <p className="mt-4 text-lg text-purple-100">
+                  Indique a plataforma Ensaio nas Nuvens e ganhe comissão por cada assinatura ativa. 
+                  Programa perfeito para maestros, professores de música e influenciadores musicais.
+                </p>
+                <div className="mt-6">
+                  <Link
+                    to="/afiliados"
+                    className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-purple-700 bg-white hover:bg-gray-100"
+                  >
+                    Quero ser um afiliado
+                    <ArrowRightIcon className="ml-2 h-5 w-5" />
+                  </Link>
+                </div>
+              </div>
+              <div className="mt-8 md:mt-0 md:ml-8">
+                <div className="bg-white/10 p-6 rounded-lg backdrop-blur-sm">
+                  <p className="text-2xl font-bold text-white">Até 30% de comissão</p>
+                  <p className="mt-2 text-purple-100">por indicação bem-sucedida</p>
+                  <ul className="mt-4 space-y-2 text-purple-100">
+                    <li className="flex items-center">
+                      <CheckCircleIcon className="h-5 w-5 text-green-400 mr-2" />
+                      Pagamentos mensais
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircleIcon className="h-5 w-5 text-green-400 mr-2" />
+                      Materiais de divulgação
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircleIcon className="h-5 w-5 text-green-400 mr-2" />
+                      Suporte dedicado
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

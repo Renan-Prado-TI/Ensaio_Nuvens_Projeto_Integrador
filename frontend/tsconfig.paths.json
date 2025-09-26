@@ -3,17 +3,17 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/pages/*": ["./src/pages/*"],
-      "@/assets/*": ["./src/assets/*"],
-      "@/styles/*": ["./src/styles/*"],
-      "@/utils/*": ["./src/utils/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/contexts/*": ["./src/contexts/*"],
-      "@/types/*": ["./src/types/*"]
-    },
-    "types": ["vite/client", "node"],
-    "esModuleInterop": true,
-    "skipLibCheck": true
+      "@components/*": ["./src/components/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@assets/*": ["./src/assets/*"],
+      "@styles/*": ["./src/styles/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@contexts/*": ["./src/contexts/*"],
+      "@types/*": ["./src/types/*"],
+      "@mocks/*": ["./src/mocks/*"],
+      "@features/*": ["./src/features/*"],
+      "framer-motion": ["./node_modules/framer-motion"]
+    }
   }
 }

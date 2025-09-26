@@ -24,9 +24,9 @@ export interface DadosBandaFormulario {
     estado: string;
     referencia?: string;
   };
-  instrumentos: Array<{
-    id: string;
+  instrumentos?: Array<{
+    id?: string;
     nome: string;
-    quantidade: number;
+    quantidade?: number;
   }>;
 }

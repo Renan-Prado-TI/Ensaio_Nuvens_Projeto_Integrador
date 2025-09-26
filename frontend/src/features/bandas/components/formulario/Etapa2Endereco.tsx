@@ -55,22 +55,59 @@ export function Etapa2Endereco() {
 
   // Buscar endereço pelo CEP
   const buscarEnderecoPorCep = async (cep: string) => {
-    if (!cep || cep.replace(/\D/g, '').length !== 8) return;
+    // Limpa o CEP para verificação
+    const cepLimpo = cep.replace(/\D/g, '');
+    
+    // Valida o CEP
+    if (!cepLimpo || cepLimpo.length !== 8) {
+      return;
+    }
+    
+    // Evita múltiplas requisições simultâneas
+    if (isLoadingCep) return;
     
     setIsLoadingCep(true);
+    
     try {
-      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      // Adiciona um timeout para evitar travamentos
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos de timeout
+      
+      const response = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`Erro na requisição: ${response.status}`);
+      }
+      
       const data = await response.json();
       
-      if (!data.erro) {
-        setValue('endereco.logradouro', data.logradouro, { shouldValidate: true });
-        setValue('endereco.bairro', data.bairro, { shouldValidate: true });
-        setValue('endereco.cidade', data.localidade, { shouldValidate: true });
-        setValue('endereco.estado', data.uf, { shouldValidate: true });
+      if (data.erro) {
+        console.log('CEP não encontrado');
+        return;
       }
-    } catch (error) {
-      console.error('Erro ao buscar CEP:', error);
+      
+      // Atualiza os campos do formulário
+      if (data.logradouro) setValue('endereco.logradouro', data.logradouro, { shouldValidate: true });
+      if (data.bairro) setValue('endereco.bairro', data.bairro, { shouldValidate: true });
+      if (data.localidade) setValue('endereco.cidade', data.localidade, { shouldValidate: true });
+      if (data.uf) setValue('endereco.estado', data.uf, { shouldValidate: true });
+      
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          console.error('Tempo de busca do CEP excedido');
+        } else {
+          console.error('Erro ao buscar CEP:', error.message);
+        }
+      } else {
+        console.error('Erro desconhecido ao buscar CEP');
+      }
     } finally {
+      // Garante que o estado de loading seja sempre finalizado
       setIsLoadingCep(false);
     }
   };
@@ -90,7 +127,6 @@ export function Etapa2Endereco() {
             <Input
               id="endereco.cep"
               placeholder="00000-000"
-              maxLength={9}
               defaultValue={watch('endereco.cep')}
               onChange={(e) => {
                 handleCepChange(e);
@@ -103,13 +139,13 @@ export function Etapa2Endereco() {
                   buscarEnderecoPorCep(cep);
                 }
               }}
-              className="pr-10"
+              className="w-full rounded-md border border-gray-200 bg-white shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
             />
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              className="absolute right-0 top-0 h-full px-3 text-muted-foreground hover:bg-transparent"
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
               onClick={() => {
                 const cep = watch('endereco.cep')?.replace(/\D/g, '');
                 if (cep?.length === 8) {
@@ -139,6 +175,7 @@ export function Etapa2Endereco() {
           <Input
             id="endereco.logradouro"
             placeholder="Rua, Avenida, etc."
+            className="bg-white border-gray-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             {...register('endereco.logradouro', {
               required: '❌ O logradouro é obrigatório para continuar'
             })}
@@ -158,6 +195,7 @@ export function Etapa2Endereco() {
           <Input
             id="endereco.numero"
             placeholder="Número"
+            className="bg-white border-gray-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             {...register('endereco.numero', {
               required: '❌ O número é obrigatório para continuar'
             })}
@@ -175,6 +213,7 @@ export function Etapa2Endereco() {
         <Input 
           id="endereco.complemento"
           placeholder="Apartamento, bloco, etc."
+          className="bg-white border-gray-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
           {...register('endereco.complemento')}
         />
       </div>
@@ -189,6 +228,7 @@ export function Etapa2Endereco() {
           <Input
             id="endereco.bairro"
             placeholder="Bairro"
+            className="bg-white border-gray-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             {...register('endereco.bairro', {
               required: '❌ O bairro é obrigatório para continuar'
             })}
@@ -208,6 +248,7 @@ export function Etapa2Endereco() {
           <Input
             id="endereco.cidade"
             placeholder="Cidade"
+            className="bg-white border-gray-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             {...register('endereco.cidade', {
               required: '❌ A cidade é obrigatória para continuar'
             })}
@@ -226,7 +267,7 @@ export function Etapa2Endereco() {
           </Label>
           <select
             id="endereco.estado"
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-500 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
             {...register('endereco.estado', {
               required: '❌ O estado é obrigatório para continuar'
             })}
@@ -253,6 +294,7 @@ export function Etapa2Endereco() {
         <Input 
           id="endereco.referencia"
           placeholder="Ex: Próximo ao mercado X"
+          className="bg-white border-gray-200 focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
           {...register('endereco.referencia')}
         />
       </div>

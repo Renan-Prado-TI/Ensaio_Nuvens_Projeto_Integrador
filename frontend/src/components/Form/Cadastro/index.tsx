@@ -1,7 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import type { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { CadastroFormData, DadosPessoais, Endereco, Credenciais, DadosMusico, DadosGestor } from '@/types/cadastro';
+
+// Types
+type DadosPessoais = {
+  nomeCompleto: string;
+  cpf: string;
+  dataNascimento: string;
+  telefone: string;
+};
+
+type Endereco = {
+  cep: string;
+  tipoLogradouro: string;
+  logradouro: string;
+  numero: string;
+  complemento: string;
+  bairro: string;
+  cidade: string;
+  estado: string;
+};
+
+type Credenciais = {
+  email: string;
+  senha: string;
+  confirmarSenha: string;
+  tipoUsuario: string[];
+};
+
+type DadosMusico = {
+  instrumentos: string[];
+};
+
+type DadosGestor = {
+  nomeBanda: string;
+  telefone: string;
+  descricao: string;
+};
+
+export interface CadastroFormData {
+  dadosPessoais: DadosPessoais;
+  endereco: Endereco;
+  credenciais: Credenciais;
+  dadosMusico?: DadosMusico;
+  dadosGestor?: DadosGestor;
+}
 import {
   DadosPessoais as DadosPessoaisStep,
   Endereco as EnderecoStep,
@@ -11,8 +54,8 @@ import {
 } from './Steps';
 import ProgressSteps from '@/components/Form/Cadastro/ProgressSteps';
 
-const CadastroForm = () => {
-  const [step, setStep] = useState(1);
+const CadastroForm: React.FC = () => {
+  const [step, setStep] = useState<number>(1);
   const [formData, setFormData] = useState<CadastroFormData>({
     dadosPessoais: {
       nomeCompleto: '',
@@ -47,6 +90,13 @@ const CadastroForm = () => {
   });
 
   const navigate = useNavigate();
+  
+  // Função para voltar para a etapa anterior
+  const prevStep = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
   
   // Calcular o total de etapas com base no tipo de usuário
   const calculateTotalSteps = () => {
@@ -87,25 +137,37 @@ const CadastroForm = () => {
     }
   }, [totalSteps, step]);
 
+  // Função para avançar para a próxima etapa
   const nextStep = () => {
     // Verificar se está na etapa de credenciais e se pelo menos um tipo foi selecionado
     if (step === 3 && formData.credenciais.tipoUsuario.length === 0) {
-      return; // Não avança se nenhum tipo for selecionado
+      alert('Selecione pelo menos um tipo de conta (Músico e/ou Gestor)');
+      return;
     }
     
-    if (step < totalSteps) {
+    if (validateStep(step) && step < totalSteps) {
       setStep(step + 1);
     }
   };
   
-  const prevStep = () => {
-    if (step > 1) {
-      setStep(step - 1);
+  // Validate current step
+  const validateStep = (currentStep: number): boolean => {
+    // Add validation logic for each step
+    switch (currentStep) {
+      case 1: // Dados Pessoais
+        if (!formData.dadosPessoais.nomeCompleto.trim()) {
+          alert('Por favor, preencha o nome completo');
+          return false;
+        }
+        // Add more validations as needed
+        break;
+      // Add validation for other steps
     }
+    return true;
   };
   
   // Verificar se o botão de próxima etapa deve estar desabilitado
-  const isNextButtonDisabled = () => {
+  const isNextButtonDisabled = (): boolean => {
     // Desabilitar se estiver na etapa de credenciais e nenhum tipo for selecionado
     if (step === 3 && formData.credenciais.tipoUsuario.length === 0) {
       return true;
@@ -113,27 +175,60 @@ const CadastroForm = () => {
     return false;
   };
 
+  // Função para envio do formulário
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Apenas verifica se pelo menos um tipo de conta foi selecionado
+    // Validação final antes do envio
     if (formData.credenciais.tipoUsuario.length === 0) {
       alert('Selecione pelo menos um tipo de conta (Músico e/ou Gestor)');
       return;
     }
     
-    // Apenas verifica se as senhas coincidem
     if (formData.credenciais.senha !== formData.credenciais.confirmarSenha) {
       alert('As senhas não coincidem');
       return;
     }
     
+    // Validação de campos obrigatórios
+    if (!formData.dadosPessoais.nomeCompleto.trim()) {
+      alert('Por favor, preencha o nome completo');
+      return;
+    }
+    
+    // Validação de e-mail
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.credenciais.email)) {
+      alert('Por favor, insira um e-mail válido');
+      return;
+    }
+    
+    // Validação de senha (mínimo de 6 caracteres)
+    if (formData.credenciais.senha.length < 6) {
+      alert('A senha deve ter pelo menos 6 caracteres');
+      return;
+    }
+    
     console.log('Dados do formulário para envio:', formData);
     
-    // Mostra alerta de sucesso
-    alert('Cadastro realizado com sucesso! Você será redirecionado para a página de login.');
+    // Aqui você pode adicionar a lógica de envio para a API
+    // Exemplo:
+    // try {
+    //   const response = await api.post('/usuarios', formData);
+    //   console.log('Resposta da API:', response.data);
+    //   
+    //   // Mostra alerta de sucesso
+    //   alert('Cadastro realizado com sucesso! Você será redirecionado para a página de login.');
+    //   
+    //   // Redireciona para a página de login
+    //   navigate('/login');
+    // } catch (error) {
+    //   console.error('Erro ao cadastrar:', error);
+    //   alert('Ocorreu um erro ao realizar o cadastro. Por favor, tente novamente.');
+    // }
     
-    // Redireciona para a página de login
+    // Simulação de sucesso (remover quando implementar a API)
+    alert('Cadastro realizado com sucesso! Você será redirecionado para a página de login.');
     navigate('/login');
   };
 

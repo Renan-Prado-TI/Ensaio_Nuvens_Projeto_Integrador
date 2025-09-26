@@ -11,10 +11,10 @@ interface NotificationProps {
 }
 
 const typeClasses = {
-  success: 'bg-green-100 border-green-500 text-green-700',
-  error: 'bg-red-100 border-red-500 text-red-700',
-  info: 'bg-blue-100 border-blue-500 text-blue-700',
-  warning: 'bg-yellow-100 border-yellow-500 text-yellow-700',
+  success: 'bg-green-50 border-green-400 text-green-800',
+  error: 'bg-red-50 border-red-400 text-red-800',
+  info: 'bg-blue-50 border-blue-400 text-blue-800',
+  warning: 'bg-yellow-50 border-yellow-400 text-yellow-800',
 };
 
 export const Notification = ({
@@ -47,20 +47,22 @@ export const Notification = ({
 
   return (
     <div
-      className={`fixed top-4 right-4 p-4 rounded-lg border-l-4 shadow-lg z-50 max-w-md transition-all duration-300 transform ${
+      className={`fixed bottom-4 right-4 p-4 rounded-lg border-l-4 shadow-lg z-50 max-w-sm transition-all duration-300 transform ${
         typeClasses[type]
       }`}
       role="alert"
     >
-      <div className="flex items-center justify-between">
-        <p className="text-sm">{message}</p>
+      <div className="flex items-start">
+        <div className="flex-1">
+          <p className="text-sm font-medium">{message}</p>
+        </div>
         <button
           type="button"
           onClick={handleClose}
-          className="ml-4 text-current opacity-50 hover:opacity-100 focus:outline-none"
-          aria-label="Fechar notificação"
+          className="ml-3 -mr-1.5 -mt-0.5 p-1 rounded-md inline-flex items-center justify-center text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-300"
+          aria-label="Fechar"
         >
-          <X className="w-4 h-4" />
+          <X className="h-4 w-4" />
         </button>
       </div>
     </div>

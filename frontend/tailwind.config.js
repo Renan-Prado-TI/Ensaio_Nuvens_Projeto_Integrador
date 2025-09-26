@@ -1,29 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ['class'],
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    container: {
-      center: true,
-      padding: '1.5rem',
-      screens: {
-        '2xl': '1400px',
-      },
-    },
     extend: {
       colors: {
-        // Cores do tema
         primary: {
-          DEFAULT: '#6A0DAD', // Roxo principal
+          DEFAULT: '#6A0DAD',
           50: '#F5F0FF',
           100: '#E6D6FF',
           200: '#D1B3FF',
           300: '#B388FF',
           400: '#8C4DFF',
-          500: '#6A0DAD', // Roxo principal
+          500: '#6A0DAD',
           600: '#5A0B94',
           700: '#4A097A',
           800: '#3A0761',
@@ -125,9 +116,5 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-    require('tailwindcss-animate'),
-  ],
+  // Plugins removidos para simplificar a configuração
 }

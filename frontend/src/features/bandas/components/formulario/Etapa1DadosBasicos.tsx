@@ -93,13 +93,15 @@ export function Etapa1DadosBasicos() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Dados Básicos</h2>
+      <h2 className="text-xl font-semibold text-primary-700 mb-4">Dados Básicos</h2>
       
       {/* Upload da Logo */}
-      <div className="space-y-2">
-        <Label htmlFor="logo">Logo da Banda</Label>
+      <div className="space-y-3">
+        <Label htmlFor="logo" className="block text-sm font-medium text-gray-700">
+          Logo da Banda
+        </Label>
         <div className="flex items-center gap-4">
-          <div className="w-24 h-24 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+          <div className="w-24 h-24 rounded-full bg-white border-2 border-dashed border-gray-200 flex items-center justify-center overflow-hidden hover:border-primary-300 transition-colors">
             {watch('logo') ? (
               <img 
                 src={URL.createObjectURL(watch('logo')!)} 
@@ -118,49 +120,58 @@ export function Etapa1DadosBasicos() {
               className="hidden"
               onChange={handleFileChange}
             />
-            <Label 
-              htmlFor="logo" 
-              className="cursor-pointer text-sm text-primary hover:underline"
-            >
-              {watch('logo') ? 'Alterar imagem' : 'Enviar imagem'}
-            </Label>
-            <p className="text-xs text-muted-foreground mt-1">
-              Formatos: JPG, PNG. Máx: 5MB
-            </p>
+            <div>
+              <Label 
+                htmlFor="logo" 
+                className="cursor-pointer text-sm font-medium text-primary-600 hover:text-primary-800 hover:underline transition-colors"
+              >
+                {watch('logo') ? 'Alterar imagem' : 'Enviar imagem'}
+              </Label>
+              <p className="text-xs text-gray-500 mt-1">
+                Formatos: JPG, PNG. Máx: 5MB
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Nome da Banda */}
       <div className="space-y-2">
-        <Label htmlFor="nome" className="flex items-center gap-1">
-          Nome da Banda *
-          <span className="text-xs text-muted-foreground">(obrigatório)</span>
+        <Label htmlFor="nome" className="block text-sm font-medium text-gray-700">
+          Nome da Banda <span className="text-red-500">*</span>
         </Label>
-        <Input
-          id="nome"
-          placeholder="Digite o nome da banda"
-          {...register('nome', {
-            required: '❌ O nome da banda é obrigatório para continuar',
-            minLength: {
-              value: 2,
-              message: '❌ O nome deve ter pelo menos 2 caracteres'
-            }
-          })}
-        />
-        {errors.nome && (
-          <p className="text-sm text-red-600 font-medium">{errors.nome.message}</p>
-        )}
+        <div className="mt-1">
+          <Input
+            id="nome"
+            placeholder="Digite o nome da banda"
+            className="w-full rounded-md border-gray-200 bg-white shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+            {...register('nome', {
+              required: 'O nome da banda é obrigatório',
+              minLength: {
+                value: 2,
+                message: 'O nome deve ter pelo menos 2 caracteres'
+              }
+            })}
+          />
+          {errors.nome && (
+            <p className="mt-1 text-sm text-red-600">{errors.nome.message}</p>
+          )}
+        </div>
       </div>
 
       {/* Nome Artístico */}
       <div className="space-y-2">
-        <Label htmlFor="nomeArtistico">Nome Artístico</Label>
-        <Input 
-          id="nomeArtistico"
-          placeholder="Se diferente do nome oficial"
-          {...register('nomeArtistico')}
-        />
+        <Label htmlFor="nomeArtistico" className="block text-sm font-medium text-gray-700">
+          Nome Artístico
+        </Label>
+        <div className="mt-1">
+          <Input 
+            id="nomeArtistico"
+            placeholder="Se diferente do nome oficial"
+            className="w-full rounded-md border-gray-200 bg-white shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
+            {...register('nomeArtistico')}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,7 +199,7 @@ export function Etapa1DadosBasicos() {
               value={watch('cnpj') || ''}
               onChange={handleCNPJChange}
               maxLength={18}
-              className="pl-9"
+              className="w-full rounded-md border border-gray-200 bg-white shadow-sm pl-9 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
             />
           </div>
           {errors.cnpj && (
@@ -210,7 +221,7 @@ export function Etapa1DadosBasicos() {
               value={watch('telefone') || ''}
               onChange={handleTelefoneChange}
               maxLength={15}
-              className="pl-9"
+              className="w-full rounded-md border border-gray-200 bg-white shadow-sm pl-9 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
             />
           </div>
           {errors.telefone && (
@@ -231,7 +242,7 @@ export function Etapa1DadosBasicos() {
               id="email"
               type="email"
               placeholder="seu@email.com"
-              className="pl-9"
+              className="w-full rounded-md border border-gray-200 bg-white shadow-sm pl-9 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
               {...register('email', {
                 required: '❌ O email é obrigatório para continuar',
                 pattern: {
@@ -269,7 +280,7 @@ export function Etapa1DadosBasicos() {
             <Input 
               id="fundacao"
               type="date"
-              className="pl-9"
+              className="w-full rounded-md border border-gray-200 bg-white shadow-sm pl-9 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors"
               {...register('fundacao')}
             />
           </div>
@@ -279,85 +290,125 @@ export function Etapa1DadosBasicos() {
 
       {/* Descrição */}
       <div className="space-y-2">
-        <Label htmlFor="descricao" className="flex items-center gap-1">
-          Descrição *
-          <span className="text-xs text-muted-foreground">(obrigatório)</span>
+        <Label htmlFor="descricao" className="block text-sm font-medium text-gray-700">
+          Descrição <span className="text-red-500">*</span>
         </Label>
-        <Textarea
-          id="descricao"
-          placeholder="Conte um pouco sobre a banda..."
-          className="min-h-[120px]"
-          {...register('descricao', {
-            required: '❌ A descrição é obrigatória para continuar',
-            minLength: {
-              value: 10,
-              message: '❌ A descrição deve ter pelo menos 10 caracteres'
-            },
-            maxLength: {
-              value: 500,
-              message: '❌ A descrição deve ter no máximo 500 caracteres'
-            }
-          })}
-        />
-        <div className="flex justify-between text-sm text-muted-foreground">
-          <span>Mínimo de 10 caracteres</span>
-          <span>{watch('descricao')?.length || 0}/500</span>
+        <div className="mt-1">
+          <Textarea
+            id="descricao"
+            placeholder="Conte um pouco sobre a banda..."
+              className="w-full rounded-md border border-gray-200 bg-white shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500 min-h-[100px] transition-colors"
+            {...register('descricao', {
+              required: 'A descrição é obrigatória',
+              minLength: {
+                value: 10,
+                message: 'A descrição deve ter pelo menos 10 caracteres'
+              },
+              maxLength: {
+                value: 500,
+                message: 'A descrição deve ter no máximo 500 caracteres'
+              }
+            })}
+          />
+          <div className="mt-1 flex justify-between text-sm text-gray-500">
+            <span>Mínimo de 10 caracteres</span>
+            <span className={watch('descricao')?.length > 500 ? 'text-red-600 font-medium' : ''}>
+              {watch('descricao')?.length || 0}/500
+            </span>
+          </div>
+          {fieldErrors.descricao?.message && (
+            <p className="mt-1 text-sm text-red-600">{fieldErrors.descricao.message}</p>
+          )}
         </div>
-        {fieldErrors.descricao?.message && (
-          <p className="text-sm text-red-600 font-medium">{fieldErrors.descricao.message}</p>
-        )}
       </div>
 
       {/* Redes Sociais */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Redes Sociais</h3>
+      <div className="space-y-4 pt-4 border-t border-gray-200">
+        <h3 className="text-lg font-medium text-gray-900">Redes Sociais</h3>
+        <p className="text-sm text-gray-500">Adicione os links das suas redes sociais (opcional)</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-center space-x-2">
-            <Facebook className="h-5 w-5 text-blue-600" />
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <Facebook className="h-5 w-5 text-blue-600" />
+              <Label htmlFor="facebook" className="text-sm font-medium text-gray-700">
+                Facebook
+              </Label>
+            </div>
             <Input 
+              id="facebook"
               placeholder="https://facebook.com/suabanda"
               {...register('facebook')}
-              className="flex-1"
+              className="w-full rounded-md border-gray-200 bg-white shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             />
           </div>
-          <div className="flex items-center space-x-2">
-            <Instagram className="h-5 w-5 text-pink-600" />
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <Instagram className="h-5 w-5 text-pink-600" />
+              <Label htmlFor="instagram" className="text-sm font-medium text-gray-700">
+                Instagram
+              </Label>
+            </div>
             <Input 
+              id="instagram"
               placeholder="https://instagram.com/suabanda"
               {...register('instagram')}
-              className="flex-1"
+              className="w-full rounded-md border-gray-200 bg-white shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             />
           </div>
-          <div className="flex items-center space-x-2">
-            <Youtube className="h-5 w-5 text-red-600" />
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <Youtube className="h-5 w-5 text-red-600" />
+              <Label htmlFor="youtube" className="text-sm font-medium text-gray-700">
+                YouTube
+              </Label>
+            </div>
             <Input 
+              id="youtube"
               placeholder="https://youtube.com/suabanda"
               {...register('youtube')}
-              className="flex-1"
+              className="w-full rounded-md border-gray-200 bg-white shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             />
           </div>
-          <div className="flex items-center space-x-2">
-            <Linkedin className="h-5 w-5 text-blue-700" />
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <Linkedin className="h-5 w-5 text-blue-700" />
+              <Label htmlFor="linkedin" className="text-sm font-medium text-gray-700">
+                LinkedIn
+              </Label>
+            </div>
             <Input 
+              id="linkedin"
               placeholder="https://linkedin.com/company/suabanda"
               {...register('linkedin')}
-              className="flex-1"
+              className="w-full rounded-md border-gray-200 bg-white shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             />
           </div>
-          <div className="flex items-center space-x-2">
-            <Twitter className="h-5 w-5 text-blue-400" />
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <Twitter className="h-5 w-5 text-blue-400" />
+              <Label htmlFor="tiktok" className="text-sm font-medium text-gray-700">
+                TikTok
+              </Label>
+            </div>
             <Input 
-              placeholder="https://twitter.com/suabanda"
+              id="tiktok"
+              placeholder="https://tiktok.com/@suabanda"
               {...register('tiktok')}
-              className="flex-1"
+              className="w-full rounded-md border-gray-200 bg-white shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             />
           </div>
-          <div className="flex items-center space-x-2">
-            <Globe className="h-5 w-5 text-gray-700" />
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2">
+              <Globe className="h-5 w-5 text-gray-700" />
+              <Label htmlFor="site" className="text-sm font-medium text-gray-700">
+                Site
+              </Label>
+            </div>
             <Input 
+              id="site"
               placeholder="https://suabanda.com.br"
               {...register('site')}
-              className="flex-1"
+              className="w-full rounded-md border-gray-200 bg-white shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500"
             />
           </div>
         </div>

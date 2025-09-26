@@ -1,6 +1,5 @@
-// Referência para tipos do Vite e do Swiper
+// Referência para tipos do Vite
 /// <reference types="vite/client" />
-/// <reference types="@types/swiper" />
 
 // Carrega as declarações de tipos globais
 import './global.d';
